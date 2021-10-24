@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from chuntels.views import home,feed,publication
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('home/', home),
+    path('feed/', feed),
+    path('publication/', publication),
 ]
