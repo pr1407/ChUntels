@@ -4,6 +4,16 @@ from django.template.loader import get_template
 from django.shortcuts import render
 
 
+def login(request):
+
+    return render(
+        request,
+        'Login/login.html',
+        {
+            "tittle": "Pagina Principal",
+        }
+    )
+
 def home(request):
 
     return render(
@@ -18,7 +28,7 @@ def feed(request):
 
     return render(
         request,
-        'Components/feed.html',
+        'Feed/feed.html',
         {
             "tittle": "Pagina Principal",
         }
@@ -28,7 +38,7 @@ def publication(request):
 
     return render(
         request,
-        'Components/publication.html',
+        'Publication/publication.html',
         {
             "tittle": "Pagina Principal",
         }

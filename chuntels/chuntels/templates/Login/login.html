@@ -1,0 +1,20 @@
+{% extends "../base.html" %}
+
+{% load static %}
+
+{% block title %} Login page {% endblock %}
+
+
+{% block content %}
+
+<div id="login">
+    <p>[[ saludo ]]</p>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static '/vuejs/Login/Login.js' %}"></script>
+
+{% endblock %}

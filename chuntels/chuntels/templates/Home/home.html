@@ -1,11 +1,14 @@
 {% extends "../base.html" %}
 
+{% load static %}
+
 {% block title %} Home page {% endblock %}
 
 
 {% block content %}
 
-<div class="container">
+<div class="container" id="home">
+    <p>[[ saludo ]]</p>
     <div class="row">
         <div class="col-12">
             <div class="card card-profile">
@@ -66,7 +69,7 @@
             <div class="d-flex w-100 justify-content-between">
                 <div>
                     <div class="d-flex w-100 align-items-center">
-                        <img src="../../assets/img/theme/team-1.jpg" alt="Image placeholder" class="avatar avatar-xs mr-2" />
+                        <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg" alt="Image placeholder" class="avatar avatar-xs mr-2" />
                         <h5 class="mb-1">Tim</h5>
                     </div>
                 </div>
@@ -83,7 +86,7 @@
             <div class="d-flex w-100 justify-content-between">
                 <div>
                     <div class="d-flex w-100 align-items-center">
-                        <img src="../../assets/img/theme/team-2.jpg" alt="Image placeholder" class="avatar avatar-xs mr-2" />
+                        <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg" alt="Image placeholder" class="avatar avatar-xs mr-2" />
                         <h5 class="mb-1">Mike</h5>
                     </div>
                 </div>
@@ -100,7 +103,7 @@
             <div class="d-flex w-100 justify-content-between">
                 <div>
                     <div class="d-flex w-100 align-items-center">
-                        <img src="../../assets/img/theme/team-3.jpg" alt="Image placeholder" class="avatar avatar-xs mr-2" />
+                        <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg" alt="Image placeholder" class="avatar avatar-xs mr-2" />
                         <h5 class="mb-1">Tim</h5>
                     </div>
                 </div>
@@ -116,5 +119,12 @@
         </div>
     </div>
 </div>
+
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static '/vuejs/Home/Home.js' %}"></script>
 
 {% endblock %}
