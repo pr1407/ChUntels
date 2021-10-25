@@ -3,5 +3,14 @@ const home = new Vue({
     delimiters:['[[',']]'],
     data: {
         saludo:'Hola Mundo!'
+    },
+    methods:{
+        async responce(){
+
+            const result = await axios.get('/api/saludo')
+
+
+            console.log(result)
+        }
     }
 });

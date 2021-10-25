@@ -43,3 +43,7 @@ def publication(request):
             "tittle": "Pagina Principal",
         }
     )
+
+def service(request):
+
+    return HttpResponse('Hola!')
