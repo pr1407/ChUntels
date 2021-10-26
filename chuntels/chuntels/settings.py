@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'loginUsuarios',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +55,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            "F:/Universidad/LP3/ChUntels/chuntels/chuntels/templates"
+            os.path.join(BASE_DIR, 'chuntels/templates/')
+            #"C:\\Users\\USUARIO\\Documents\\Diseño web\\Plugins\\Chuntels\\ChUntels\\chuntels\\chuntels\\templates"
             ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -121,13 +121,35 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'public/static/')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'public/media/')
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    "F:/Universidad/LP3/ChUntels/chuntels/chuntels/static"
+    os.path.join(BASE_DIR, 'public/static_dev/'),
+    os.path.join(BASE_DIR, 'chuntels/static/'),
 ]
 
-# Default primary key field type
+
+# Default primary key field type 
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Directorio de Vue
+UI_DIR = os.path.join(BASE_DIR, 'frontend/')
+
+# Opciones de webpack-loader
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'webpack_bundles/',
+        'STATS_FILE': os.path.join(UI_DIR, 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+        'LOADER_CLASS': 'webpack_loader.loader.WebpackLoader',
+    }
+}

@@ -7,6 +7,8 @@
 
 {% block content %}
 
+{% include "../Components/navbar.html" %}
+
 <div class="container-fluid mt-5" id="feed">
     <p>[[ saludo ]]</p>
     <div class="row">
@@ -182,6 +184,6 @@
 
 {% block js %}
 
-<script src="{% static '/vuejs/Feed/Feed.js' %}"></script>
+<script src="{% static '/vuejs/views/Feed/Feed.js' %}"></script>
 
 {% endblock %}
