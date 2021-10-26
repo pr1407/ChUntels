@@ -7,6 +7,8 @@
 
 {% block content %}
 
+{% include "../Components/navbar.html" %}
+
 <div class="container" id="home">
     <p>[[ saludo ]]</p>
     <button class="btn btn-default" @click="responce">boton</button>
@@ -126,6 +128,6 @@
 
 {% block js %}
 
-<script src="{% static '/vuejs/Home/Home.js' %}"></script>
+<script src="{% static '/vuejs/views/Home/Home.js' %}"></script>
 
 {% endblock %}

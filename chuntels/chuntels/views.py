@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.template import Template, Context
 from django.template.loader import get_template
 from django.shortcuts import render
-
+from io import StringIO
+import json
 
 def login(request):
 
@@ -46,4 +47,21 @@ def publication(request):
 
 def service(request):
 
-    return HttpResponse('Hola!')
+    responce = {}
+
+    if request.method == 'POST':
+        responce = {
+            "valor":True,
+            "msn":'Hola!',
+            "data":{'nombre':'Juan','apellido':'Perez'}
+        }
+    else:
+        responce = {
+            "valor":False,
+            "msn":'Chau!',
+            "data":{}
+        }    
+    
+    jsonResponse = json.dumps(responce, sort_keys=True)
+
+    return HttpResponse(jsonResponse)

@@ -7,6 +7,8 @@
 
 {% block content %}
 
+{% include "../Components/navbar.html" %}
+
 <div class="container mt-5" id="publication">
     <p>[[ saludo ]]</p>
     <div class="row">
@@ -93,6 +95,6 @@
 
 {% block js %}
 
-<script src="{% static '/vuejs/Publication/Publication.js' %}"></script>
+<script src="{% static '/vuejs/views/Publication/Publication.js' %}"></script>
 
 {% endblock %}
