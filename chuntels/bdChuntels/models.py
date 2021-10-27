@@ -1,7 +1,6 @@
 from django.db import models
 
 # Create your models here.
-
 class carrear(models.Model):
     idcarrera = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
@@ -105,9 +104,3 @@ class Work(models.Model):
     typePost = models.ForeignKey(typePost, on_delete=models.CASCADE)
     likes = models.ManyToManyField(User, related_name='likesWork')
     coments = models.ManyToManyField(User, related_name='comentsWork')
-
-
-
-
-
-
