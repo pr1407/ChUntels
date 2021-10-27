@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from chuntels.views import login,home,feed,publication,service
+from chuntels.views import login,home,feed,publication,service, register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login),
+    path('register/', register),
     path('home/', home),
     path('feed/', feed),
     path('publication/', publication),

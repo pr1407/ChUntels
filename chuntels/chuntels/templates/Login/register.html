@@ -1,0 +1,27 @@
+{% extends "../base.html" %}
+
+{% load static %}
+
+{% block title %} Register page {% endblock %}
+
+
+{% block content %}
+
+<h1>Este es el sitio de registro</h1>
+<div>
+{%if form.errors%}
+    <p style="color: red;"> Revisa este campo</p>
+{% endif %}
+    <form action="" method="POST"> {% csrf_token %}  
+            {{form.as_p}}
+        <input type="submit" value="Registrar">
+    </form>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static '/vuejs/views/Login/Login.js' %}"></script>
+
+{% endblock %}
