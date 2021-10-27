@@ -7,7 +7,7 @@ const home = new Vue({
     methods:{
         async responce(){
 
-            const result = await axios.get('/api/saludo/')
+            const result = await axios.get('/api/saludo/');
             
             if(result.status === 200){
                 let responseData = result.data
