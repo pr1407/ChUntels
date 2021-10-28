@@ -11,12 +11,12 @@ class User(models.Model):
     iduser = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     email = models.EmailField(max_length=50)
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     nickname = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
-    age = models.IntegerField(null=True, blank=True)
+    age = models.DateTimeField(auto_now=False)
     typeCarrear = models.ForeignKey(carrear, on_delete=models.CASCADE)
 
 class typePost(models.Model):

@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from chuntels.views import login,home,feed,publication,service, register
+from django.conf import settings
+from django.conf.urls.static import static
+from chuntels.views import login,home,feed,publication,service, register, changeData , logout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +27,6 @@ urlpatterns = [
     path('feed/', feed),
     path('publication/', publication),
     path('api/saludo/', service),
-]
+    path('home/editdata/',changeData),
+    path('home/logout/', logout)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
