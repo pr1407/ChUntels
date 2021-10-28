@@ -7,17 +7,108 @@
 
 {% block content %}
 
-<h1>Este es el sitio de registro</h1>
-<div>
-{%if form.errors%}
-    <p style="color: red;"> Revisa este campo</p>
-{% endif %}
-    <form action="" method="POST"> {% csrf_token %}  
-            {{form.as_p}}
-        <input type="submit" value="Registrar">
-    </form>
+<div id="login" class="bg-gradient-default">
+    <div class="header py-3 py-sm-5">
+        <div class="container">
+            <div class="header-body text-center mb-7">
+                <div class="row justify-content-center">
+                    <div class="col-xl-5 col-lg-6 col-md-8 px-5">
+                        <h1 class="text-white">Crear una cuenta</h1>
+                        <p class="text-lead text-white">Crear tu cuenta CHUNTELS!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt--7 pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card bg-secondary border-0 mb-0">
+                    <div class="card-header bg-transparent pb-5">
+                        <div class="text-muted text-center mt-2 mb-3"><small>Registrate con</small></div>
+                        <div class="btn-wrapper text-center">
+                            <a href="#" class="btn btn-neutral btn-icon">
+                                <span class="btn-inner--icon"><img
+                                        src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/icons/common/github.svg"></span>
+                                <span class="btn-inner--text">Github</span>
+                            </a>
+                            <a href="#" class="btn btn-neutral btn-icon">
+                                <span class="btn-inner--icon"><img
+                                        src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/icons/common/google.svg"></span>
+                                <span class="btn-inner--text">Google</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body px-lg-5 py-lg-5">
+                        <div class="text-center text-muted mb-4">
+                            <small>O crea una cuenta</small>
+                        </div>
+                        {%if form.errors%}
+                        <p class="h5 text-red"> Revisa este campo</p>
+                        {% endif %}
+                        <form role="form" action="" method="POST"> {% csrf_token %}
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                    </div>
+                                    {{form.username}}
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                    </div>
+                                    {{form.nickname}}
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                    </div>
+                                    {{form.email}}
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                {{form.carrear}}
+                            </div>
+                            <div class="form-group mb-3">
+                                {{form.nacimiento}}
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input-group-merge input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                                    </div>
+                                    {{form.password}}
+                                </div>
+                            </div>
+                            <div class="custom-control custom-control-alternative custom-checkbox">
+                                <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
+                                <label class="custom-control-label" for=" customCheckLogin">
+                                    <span class="text-muted">Recuerdame</span>
+                                </label>
+                            </div>
+                            <div class="text-center">
+                                <input type="submit" class="btn btn-primary my-4" value="Ingresar">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <a href="#" class="text-light"><small>Olvidaste tu contraseña?</small></a>
+                    </div>
+                    <div class="col-6 text-right">
+                        <a href="/register/" class="text-light"><small>Crea una nueva cuenta</small></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock %}
 
 {% block js %}
