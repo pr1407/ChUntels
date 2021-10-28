@@ -30,7 +30,7 @@ def register(request):
                 password = make_password(registroUsuario['password'], salt=None, hasher='default'), 
                 created_at = today,
                 nickname = registroUsuario['nickname'],
-                #photo = registroUsuario['fotoPerfilUsuario'],
+                photo = registroUsuario['fotoPerfilUsuario'],
                 age = registroUsuario['nacimiento'],
                 typeCarrear = registroUsuario['carrear']
             )
@@ -65,6 +65,7 @@ def login(request):
                 return redirect('/home')
             else:
                 return redirect('/login')   
+
 
     return render(  
         request,
@@ -104,7 +105,7 @@ def changeData(request):
     formEdit = EditForm()
     
     if request.method == 'POST':
-        formEdit = EditForm(request.POST)
+        formEdit = EditForm(request.POST , request.FILES)
         if formEdit.is_valid():
             editData = formEdit.cleaned_data
             usuario = User.objects.get(iduser=request.session['user'])
@@ -116,10 +117,13 @@ def changeData(request):
                 usuario.nickname = editData['newNickname']
             if(editData['newPassword'] != ''):
                 usuario.password = make_password(editData['newPassword'], salt=None, hasher='default')
-            #usuario.age = editData['age']
+            """
+            usuario.age = editData['age']
             if(editData['newCarrear'] != ''):
                 usuario.typeCarrear = editData['newCarrear']
-            
+            """
+            if(editData['newfotoPerfilUsuario'] != ''):
+                usuario.photo = editData['newfotoPerfilUsuario']
             usuario.save()
             return redirect('/home')
 

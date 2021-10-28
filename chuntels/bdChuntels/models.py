@@ -15,7 +15,7 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     nickname = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
-    photo = models.ImageField(upload_to='photos/', null=True, blank=True)
+    photo = models.ImageField(upload_to='fotosPerfil/', null=True, blank=True)
     age = models.DateTimeField(auto_now=False)
     typeCarrear = models.ForeignKey(carrear, on_delete=models.CASCADE)
 

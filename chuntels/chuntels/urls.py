@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from chuntels.views import login,home,feed,publication,service, register, changeData , logout
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path('login/', login),
     path('register/', register),
@@ -28,5 +29,7 @@ urlpatterns = [
     path('publication/', publication),
     path('api/saludo/', service),
     path('home/editdata/',changeData),
-    path('home/logout/', logout)
+    path('home/logout/', logout),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

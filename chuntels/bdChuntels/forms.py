@@ -29,4 +29,4 @@ class EditForm(forms.Form):
     newNickname = forms.CharField(label='Nickname', max_length=100 , required=False)
     newPassword = forms.CharField(label='Password', widget=forms.PasswordInput() , required=False)
     newfotoPerfilUsuario = forms.ImageField(label='Foto de perfil', widget=forms.FileInput() , required=False)
-    newCarrear = forms.ModelChoiceField(label='Carrera', queryset=carrear.objects.all() , required=False)
+    #newCarrear = forms.ModelChoiceField(label='Carrera', queryset=carrear.objects.all() , required=False)newfotoPerfilUsuario
