@@ -61,6 +61,7 @@ class Follow(models.Model):
     idfollow = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
+    state = models.CharField(max_length=1 , default='0')
 
 class Like(models.Model):
     idlike = models.AutoField(primary_key=True)
@@ -72,6 +73,7 @@ class Friend(models.Model):
     idfriend = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE , related_name='personUser')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
+    state = models.CharField(max_length=1 , default='0')
 
 class stateMessage(models.Model):
     idstateMessage = models.AutoField(primary_key=True)

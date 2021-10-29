@@ -1,15 +1,19 @@
+import django
 from django.contrib.auth import hashers
 from django.http import HttpResponse
 from django.template import Template, Context
 from django.template.loader import get_template
 from django.shortcuts import redirect, render
+from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 from io import StringIO
 import json
 import datetime
 from bdChuntels.forms import RegisterForm, LoginForm , EditForm
 from django.contrib.auth.hashers import make_password, check_password
-from bdChuntels.models import User
+from django.views import View
+from django.http import JsonResponse
+from bdChuntels.models import User , Friend 
 
 def register(request):
 
@@ -178,3 +182,33 @@ def service(request):
     jsonResponse = json.dumps(responce, sort_keys=True)
 
     return HttpResponse(jsonResponse)
+
+class UserView(View):
+    def get(self, request):
+        userlist = User.objects.all()
+        return JsonResponse(list(userlist.values()), safe=False)
+    
+class UserViewId(View):
+    def get(self, request, iduser):
+        user = User.objects.get(iduser=iduser)
+        jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
+        return JsonResponse(json.loads(jsonUser), safe=False)
+
+
+class beFriends(View):
+    def post(self, request, iduser1, iduser2):
+        user1 = User.objects.get(iduser=iduser1)
+        user2 = User.objects.get(iduser=iduser2)
+        relation= Friend(user=user1, friend=user2)
+        while relation.state <= 4:
+            if relation.state == 0:
+                print('No se conocen')
+            elif relation.state == 1:
+                print('Amigos')
+            elif relation.state == 2:
+                print('Solicitud enviada')
+            elif relation.state == 3:
+                print('Solicitud recibida')
+            elif relation.state == 4:
+                print('Solicitud rechazada')
+        relation.save()

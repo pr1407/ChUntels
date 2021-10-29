@@ -1,4 +1,6 @@
 from django import forms
+from django.forms.fields import ChoiceField
+from django.forms.widgets import ChoiceWidget, SelectMultiple
 
 from bdChuntels.models import carrear
 import datetime 
@@ -9,18 +11,18 @@ class DateInput(forms.DateInput):
 
 class RegisterForm(forms.Form):
     
-    username = forms.CharField(label='Username', max_length=100)
-    email = forms.EmailField(label='Email')
-    password = forms.CharField(label='Password', widget=forms.PasswordInput())
-    nickname = forms.CharField(label='Nickname', max_length=100)
+    username = forms.CharField(label='Username',widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=100)
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    nickname = forms.CharField(label='Nickname',widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=100)
     fotoPerfilUsuario = forms.ImageField(label='Foto de perfil', widget=forms.FileInput() , required=False)
-    nacimiento = forms.DateField(label='Fecha Nacimiento' , widget=DateInput())
-    carrear = forms.ModelChoiceField(label='Carrera', queryset=carrear.objects.all())
+    nacimiento = forms.DateField(label='Fecha Nacimiento' , widget=DateInput(attrs={'class': 'form-control'}))
+    carrear = forms.ModelChoiceField(label='Carrera', widget=forms.Select(attrs={'class': 'form-control'}), queryset=carrear.objects.all())
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label='Email')
-    password = forms.CharField(label='Password', widget=forms.PasswordInput())
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
 class EditForm(forms.Form):
