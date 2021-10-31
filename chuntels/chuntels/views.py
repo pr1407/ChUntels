@@ -1,6 +1,9 @@
 import django
+from django import forms
 from django.contrib.auth import hashers
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.template import Template, Context
 from django.template.loader import get_template
 from django.shortcuts import redirect, render
@@ -17,41 +20,41 @@ from bdChuntels.models import User , Friend
 
 def register(request):
 
-    formRegistro = RegisterForm()
-
     today = datetime.date.today()
 
-
+        
     if request.method == 'POST':
-
         formRegistro = RegisterForm(request.POST)
-
         if formRegistro.is_valid():
-            registroUsuario = formRegistro.cleaned_data
-            usuario = User.objects.create(
-                name = registroUsuario['username'],
-                email = registroUsuario['email'],
-                password = make_password(registroUsuario['password'], salt=None, hasher='default'), 
-                created_at = today,
-                nickname = registroUsuario['nickname'],
-                photo = registroUsuario['fotoPerfilUsuario'],
-                age = registroUsuario['nacimiento'],
-                typeCarrear = registroUsuario['carrear']
-            )
-
-            usuario.save()
-
-            return redirect('/login')
+                registroUsuario = formRegistro.cleaned_data
+                usuario = User.objects.create(
+                    name = registroUsuario['username'],
+                    email = registroUsuario['email'],
+                    password = make_password(registroUsuario['password'], salt=None, hasher='default'), 
+                    created_at = today,
+                    nickname = registroUsuario['nickname'],
+                    photo = registroUsuario['fotoPerfilUsuario'],
+                    age = registroUsuario['nacimiento'],
+                    typeCarrear = registroUsuario['carrear']
+                )
+                usuario.save()
+                return redirect('/login')
+        
+        else: 
+            print(formRegistro.errors)
+    
+    else:
+        formRegistro = RegisterForm()
     
     return render(
-            request,
-                'Login/register.html',
+        request,
+            'Login/register.html',
                 {
                     "tittle": "Pagina Registro", 
                     "form": formRegistro
                 }
             ) 
-
+        
    
 def login(request):
 
@@ -90,9 +93,7 @@ def home(request):
                 "tittle": "Pagina Principal",
             }
         )
-    else: 
-        return redirect('/login')
-
+    return redirect('/login')
 
 
 @login_required(login_url='/login')
@@ -189,10 +190,22 @@ class UserView(View):
         return JsonResponse(list(userlist.values()), safe=False)
     
 class UserViewId(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+
     def get(self, request, iduser):
         user = User.objects.get(iduser=iduser)
+        
         jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
         return JsonResponse(json.loads(jsonUser), safe=False)
+
+    def post(self, request, iduser):
+        user = User.objects.get(iduser=iduser)
+        jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
+        datos = {"mensaje": "envio" , "datos" : json.loads(jsonUser)}
+        return JsonResponse(datos, safe=False)
+
 
 
 class beFriends(View):

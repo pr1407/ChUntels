@@ -44,7 +44,9 @@
                             <small>O crea una cuenta</small>
                         </div>
                         {%if form.errors%}
-                        <p class="h5 text-red"> Revisa este campo</p>
+                            {% for error in form.non_field_errors %}
+                                    <p class="h5 text-red">El  error es : {{error}} </p>
+                            {% endfor %}
                         {% endif %}
                         <form role="form" action="" method="POST"> {% csrf_token %}
                             <div class="form-group mb-3">

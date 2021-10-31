@@ -41,10 +41,11 @@
                     </div>
                     <div class="card-body px-lg-5 py-lg-5">
                         <div class="text-center text-muted mb-4">
-                            <small>O ingresa son una cuenta</small>
+                            <small>Ya tienes una cuenta? haz click aqui</small>
                         </div>
+                        
                         {%if form.errors%}
-                        <p class="h5 text-red"> Revisa este campo</p>
+                        <p class="h5 text-red">El  error es : {{error}} </p>
                         {% endif %}
                         <form role="form" action="" method="POST"> {% csrf_token %}
 
@@ -74,6 +75,8 @@
                                 <input type="submit" class="btn btn-primary my-4" value="Ingresar">
                             </div>
                         </form>
+
+
                     </div>
                 </div>
                 <div class="row mt-3">
