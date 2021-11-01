@@ -200,7 +200,6 @@ class UserViewId(View):
 
     def post(self, request, iduser):
         user = User.objects.get(iduser=iduser)
-        
         jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
         datos = {"mensaje": "envio" , "datos" : json.loads(jsonUser)}
         print(datos)
