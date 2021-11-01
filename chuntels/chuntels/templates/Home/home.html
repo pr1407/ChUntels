@@ -9,28 +9,27 @@
 
 {% include "../Components/navbar.html" %}
 
-<div class="container my-5"  id="home">
+<div class="container my-5" id="home">
     <div class="row">
         <div class="col-12">
             <div class="card card-profile">
-                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/img-1-1000x600.jpg"
-                    alt="Image placeholder" class="card-img-top">
+                <img src="https://www.adobe.com/es/express/discover/sizes/media_12fa8cb62228835a68a2d107675896c3aa41fb5e4.png?width=2000&format=webply&optimize=medium"
+                    alt="Image placeholder" class="card-img-top ">
                 <div class="row justify-content-center">
                     <div class="col-lg-3 order-lg-2">
                         <div class="card-profile-image">
                             <a href="#">
-
                                 <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg"
                                     class="rounded-circle">
-
                             </a>
                         </div>
                     </div>
                 </div>
                 <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
                     <div class="d-flex justify-content-between">
-                        <a href="#" class="btn btn-sm btn-info  mr-4 ">Connect</a>
-                        <a href="#" class="btn btn-sm btn-default float-right">Message</a>
+                        <a href="#" class="btn btn-sm btn-info  mr-4 "><i class="fas fa-edit"></i> Editar Perfil</a>
+                        <button class="btn btn-sm btn-default float-right" data-toggle="modal"
+                            data-target="#publicarmodal"><i class="fas fa-plus"></i> Publicar</button>
                     </div>
                 </div>
                 <div class="card-body pt-0">
@@ -39,56 +38,100 @@
                             <div class="card-profile-stats d-flex justify-content-center">
                                 <div>
                                     <span class="heading">22</span>
-                                    <span class="description">Friends</span>
+                                    <span class="description">Seguidores</span>
                                 </div>
                                 <div>
                                     <span class="heading">10</span>
-                                    <span class="description">Photos</span>
+                                    <span class="description">Publicaciones</span>
                                 </div>
                                 <div>
                                     <span class="heading">89</span>
-                                    <span class="description">Comments</span>
+                                    <span class="description">Comentarios</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="text-center">
                         <h5 class="h3">
-                            Jessica Jones<span class="font-weight-light">, 27</span>
+                            Jessica Jones<span class="font-weight-light">, 21</span>
                         </h5>
-                        <i class="fa fa-angle-right"></i>
+                        <i class="fa fa-angle-down"></i>
                         <div class="h5 font-weight-300">
-                            <i class="ni location_pin mr-2"></i>Bucharest, Romania
+                            <i class="fas fa-graduation-cap"></i> Ingenieria de Sistemas
                         </div>
                     </div>
                 </div>
+                <div class="card-footer">
+                    <div class="nav-wrapper">
+                        <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i class="fas fa-id-badge mr-2"></i>Publicaciones</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i class="fas fa-book mr-2"></i>Trabajos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-info-circle mr-2"></i>Informacion</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="list-group list-group-flush">
+        </div>
+        <div class="col-md-4 col-12">
 
-
-
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start py-4 px-4">
-
-                    <div class="d-flex w-100 justify-content-between">
-                        <div>
-                            <div class="d-flex w-100 align-items-center">
-                                <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                                    alt="Image placeholder" class="avatar avatar-xs mr-2" />
-                                <h5 class="mb-1">Tim</h5>
+            {% include "../Components/contactos.html" %}
+        </div>
+        <div class="col-md-8 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="h3 mt-0">Ultimas publicaciones</div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <a href="#">
+                                    <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg"
+                                        class="avatar">
+                                </a>
+                                <div class="mx-3">
+                                    <a href="#" class="text-dark font-weight-600 text-sm">Jessica Jones</a>
+                                    <small class="d-block text-muted">hace 2 horas</small>
+                                </div>
+                            </div>
+                            <div class="pt-3">
+                                <p class="text-sm lh-160 mb-0">Cras sit amet nibh libero nulla vel metus scelerisque
+                                    ante
+                                    sollicitudin. Cras purus odio
+                                    vestibulum in vulputate viverra turpis.</p>
+                            </div>
+                            <div class="pt-3">
+                                <div class="icon-actions">
+                                    <a href="#" class="like active">
+                                        <i class="ni ni-like-2"></i>
+                                        <span class="text-muted">50 me gusta</span>
+                                    </a>
+                                    <a href="#">
+                                        <i class="fas fa-comment-alt"></i>
+                                        <span class="text-muted">1 comentario</span>
+                                    </a>
+                                    <a href="#">
+                                        <i class="ni ni-curved-next"></i>
+                                        <span class="text-muted">2 compartidos</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                        <small>2 hrs ago</small>
                     </div>
-                    <h4 class="mt-3 mb-1"> New order for Argon Dashboard</h4>
-                    <p class="text-sm mb-0">Doasdnec id elit non mi porta gravida at eget metus. Maecenas sed diam eget
-                        risus varius blandit.</p>
-
-                </a>
-
+                </div>
+                <div class="card-footer"></div>
             </div>
         </div>
     </div>
+    {% include "../Components/publicar.html" %}
 </div>
+
 
 
 {% endblock %}

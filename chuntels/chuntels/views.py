@@ -22,7 +22,6 @@ def register(request):
 
     today = datetime.date.today()
 
-        
     if request.method == 'POST':
         formRegistro = RegisterForm(request.POST)
         if formRegistro.is_valid():
@@ -39,9 +38,7 @@ def register(request):
                 )
                 usuario.save()
                 return redirect('/login')
-        
-        else: 
-            print(formRegistro.errors)
+    
     
     else:
         formRegistro = RegisterForm()
@@ -83,7 +80,7 @@ def login(request):
         }
     )
 
-@login_required(login_url='/login')
+
 def home(request):
     if 'user' in request.session:
         return render(
@@ -189,6 +186,7 @@ class UserView(View):
         userlist = User.objects.all()
         return JsonResponse(list(userlist.values()), safe=False)
     
+# Busqueda Usuario    
 class UserViewId(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -202,26 +200,51 @@ class UserViewId(View):
 
     def post(self, request, iduser):
         user = User.objects.get(iduser=iduser)
+        
         jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
         datos = {"mensaje": "envio" , "datos" : json.loads(jsonUser)}
+        print(datos)
         return JsonResponse(datos, safe=False)
+
+class UserViewName(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+
+    def get(self, request, name):
+        user = User.objects.get(name=name)
+        
+        jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
+        return JsonResponse(json.loads(jsonUser), safe=False)
+
+class UserViewNickName(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+
+    def get(self, request, nickname):
+        user = User.objects.get(nickname=nickname)
+        jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
+        return JsonResponse(json.loads(jsonUser), safe=False)
 
 
 
 class beFriends(View):
     def post(self, request, iduser1, iduser2):
-        user1 = User.objects.get(iduser=iduser1)
-        user2 = User.objects.get(iduser=iduser2)
-        relation= Friend(user=user1, friend=user2)
-        while relation.state <= 4:
-            if relation.state == 0:
-                print('No se conocen')
-            elif relation.state == 1:
-                print('Amigos')
-            elif relation.state == 2:
-                print('Solicitud enviada')
-            elif relation.state == 3:
-                print('Solicitud recibida')
-            elif relation.state == 4:
-                print('Solicitud rechazada')
+        if iduser1 != iduser2:
+            user1 = User.objects.get(iduser=iduser1)
+            user2 = User.objects.get(iduser=iduser2)
+            relation= Friend(user=user1, friend=user2)
+
+            while relation.state <= 4:
+                if relation.state == 0:
+                    print('No se conocen')
+                elif relation.state == 1:
+                    print('Amigos')
+                elif relation.state == 2:
+                    print('Solicitud enviada')
+                elif relation.state == 3:
+                    print('Solicitud recibida')
+                elif relation.state == 4:
+                    print('Solicitud rechazada')
         relation.save()

@@ -18,18 +18,6 @@ class RegisterForm(forms.Form):
     fotoPerfilUsuario = forms.ImageField(label='Foto de perfil', widget=forms.FileInput() , required=False)
     nacimiento = forms.DateField(label='Fecha Nacimiento' , widget=DateInput(attrs={'class': 'form-control'}))
     carrear = forms.ModelChoiceField(label='Carrera', widget=forms.Select(attrs={'class': 'form-control'}), queryset=carrear.objects.all())
-    
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'nickname', 'fotoPerfilUsuario', 'nacimiento', 'carrear']
-
-
-    def clean_email(self):
-            cleaned_data = super(RegisterForm, self).clean()
-            email = self.cleaned_data.get('email')
-            if User.objects.filter(email=email).exists():
-                raise forms.ValidationError('El email ya existe, elije otro')
-            return cleaned_data
 
 
 class LoginForm(forms.Form):

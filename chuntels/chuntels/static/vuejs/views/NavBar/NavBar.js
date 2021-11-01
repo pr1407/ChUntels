@@ -1,0 +1,50 @@
+const navbar = new Vue({
+    el:'#navbar',
+    delimiters:['[[',']]'],
+    data: {
+        saludo:'Hola Mundo!',
+        inputsearch:"",
+        users:[
+            {
+                id:1,
+                name:"Jordan",
+                lastname:"Noblejas",
+                email:"",
+                phone:"",
+                address:"",
+                city:"",
+                state:"",
+            },
+            {
+                id:2,
+                name:"Pedro",
+                lastname:"Ruiz",
+                email:"",
+                phone:"",
+                address:"",
+                city:"",
+                state:"",
+            },
+            {
+                id:3,
+                name:"Juan",
+                lastname:"Torres",
+                email:"",
+                phone:"",
+                address:"",
+                city:"",
+                state:"",
+            }
+        ],
+    },
+    methods:{
+        search(){
+            console.log(this.inputsearch);
+        }
+    },
+    watch:{
+        inputsearch(val){
+            console.log(val);
+        }
+    }
+});
