@@ -1,0 +1,4 @@
+.bg-gradient-shuntels{
+    background: rgb(2,0,36);
+    background: linear-gradient(45deg, rgba(2,0,36,1) 0%, rgba(23,43,77,1) 14%, rgba(83,144,185,1) 100%);
+}
