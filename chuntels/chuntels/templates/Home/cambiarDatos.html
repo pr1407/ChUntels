@@ -7,16 +7,120 @@
 
 {% block content %}
 
+{% include "../Components/navbar.html" %}
 
 <h1>Este es el sitio de cambio Datos</h1>
 <div>
-{%if form.errors%}
+    {%if form.errors%}
     <p style="color: red;"> Revisa este campo</p>
-{% endif %}
-    <form action="" method="POST" enctype="multipart/form-data" > {% csrf_token %}  
-            {{form.as_p}}
+    {% endif %}
+    <form action="" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+        {{form.as_p}}
         <input type="submit" value="Ingresar">
     </form>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Editar Perfil </h3>
+                        </div>
+                        <div class="col-4 text-right">
+                            <a href="#!" class="btn btn-sm btn-primary">Configuracion</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <h6 class="heading-small text-muted mb-4">Informacion de ususario</h6>
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-username">Nombre de ususario</label>
+                                        <input type="text" id="input-username" class="form-control"
+                                            placeholder="Username" value="lucky.jesse">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-email">Correo</label>
+                                        <input type="email" id="input-email" class="form-control"
+                                            placeholder="jesse@example.com">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-first-name">Nick Name</label>
+                                        <input type="text" id="input-first-name" class="form-control"
+                                            placeholder="First name" value="Lucky">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-last-name">Last name</label>
+                                        <input type="text" id="input-last-name" class="form-control"
+                                            placeholder="Last name" value="Jesse">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <!-- Address -->
+                        <h6 class="heading-small text-muted mb-4">Informacion de contacto</h6>
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-address">Direccion</label>
+                                        <input id="input-address" class="form-control" placeholder="Home Address"
+                                            value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-city">Departamento</label>
+                                        <input type="text" id="input-city" class="form-control" placeholder="Departamento">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-country">Provincia</label>
+                                        <input type="text" id="input-country" class="form-control" placeholder="Provincia">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-country">Distrito</label>
+                                        <input type="text" id="input-postal-code" class="form-control"
+                                            placeholder="Distrito">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <!-- Description -->
+                        <h6 class="heading-small text-muted mb-4">About me</h6>
+                        <div class="pl-lg-4">
+                            <div class="form-group">
+                                <label class="form-control-label">About Me</label>
+                                <textarea rows="4" class="form-control"
+                                    placeholder="A few words about you ...">A beautiful premium dashboard for Bootstrap 4.</textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
