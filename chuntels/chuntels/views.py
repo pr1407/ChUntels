@@ -199,6 +199,7 @@ class UserViewId(View):
         return JsonResponse(json.loads(jsonUser), safe=False)
 
     def post(self, request, iduser):
+        print (request.POST)
         user = User.objects.get(iduser=iduser)
         jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
         datos = {"mensaje": "envio" , "datos" : json.loads(jsonUser)}
@@ -215,6 +216,19 @@ class UserViewName(View):
         
         jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
         return JsonResponse(json.loads(jsonUser), safe=False)
+        
+    def post(self, request):
+        print(request.POST.get('nombre'))
+        try:
+            user = User.objects.filter(name__contains=request.POST.get('nombre'))
+            
+            jsonUser = json.dumps(list(user.values()), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de personas" , "datos" : json.loads(jsonUser)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "datos" : {}}
+        print(datos)
+        ###datos = {"valor":True,"mensaje": "envio" , "datos" : request.POST.get('nombre')}
+        return JsonResponse(datos, safe=False)
 
 class UserViewNickName(View):
     @method_decorator(csrf_exempt)
