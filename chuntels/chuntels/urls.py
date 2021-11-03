@@ -30,7 +30,7 @@ urlpatterns = [
     path('home/editdata/',changeData),
     path('logout/', logout),
     path('user/', UserView.as_view() , name= 'userList'),
-    path('user/<str:nickname>/', UserViewNickName.as_view() , name= 'searchUser'),
+    path('user/<str:nickname>/', UserViewNickName.as_view() , name= 'userDetail'),
     path('api/search-person/', UserViewName.as_view() , name= 'userDetail'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
