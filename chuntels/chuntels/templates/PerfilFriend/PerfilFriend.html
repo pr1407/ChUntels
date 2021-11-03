@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %} Nombre ususario {% endblock %}
+{% block title %} {{userProfile.nickname}} {% endblock %}
 
 
 {% block content %}
@@ -54,11 +54,11 @@
                     </div>
                     <div class="text-center">
                         <h5 class="h3">
-                            Jessica Jones<span class="font-weight-light">, 27</span>
+                            {{userProfile.name}}<span class="font-weight-light">, {{edad}}</span>
                         </h5>
                         <i class="fa fa-angle-right"></i>
                         <div class="h5 font-weight-300">
-                            <i class="ni location_pin mr-2"></i>Bucharest, Romania
+                            <i class="ni location_pin mr-2"></i>{{userProfile.typeCarrear}}
                         </div>
                     </div>
                 </div>

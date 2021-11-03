@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from chuntels.views import login,home,feed,publication,service, register, changeData , logout , UserView ,UserViewName, UserViewNickName
+from chuntels.views import login,home,feed,publication,service, register, changeData , logout , UserView ,UserViewName, UserViewNickName , perfilUser
 urlpatterns = [
 
     path('admin/', admin.site.urls),
@@ -30,7 +30,7 @@ urlpatterns = [
     path('home/editdata/',changeData),
     path('logout/', logout),
     path('user/', UserView.as_view() , name= 'userList'),
-    path('user/<str:nickname>/', UserViewNickName.as_view() , name= 'userDetail'),
+    path('user/<str:nickname>/', perfilUser, name= 'userDetail'),
     path('api/search-person/', UserViewName.as_view() , name= 'userDetail'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

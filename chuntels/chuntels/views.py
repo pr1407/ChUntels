@@ -18,9 +18,10 @@ from django.views import View
 from django.http import JsonResponse
 from bdChuntels.models import User , Friend 
 
+today = datetime.date.today()
+
 def register(request):
 
-    today = datetime.date.today()
 
     if request.method == 'POST':
         formRegistro = RegisterForm(request.POST)
@@ -82,7 +83,7 @@ def login(request):
 
 
 def home(request):
-    today = datetime.date.today()
+
     if 'user' in request.session:
 
         user = User.objects.get(iduser = request.session['user'])
@@ -186,6 +187,21 @@ def service(request):
     jsonResponse = json.dumps(responce, sort_keys=True)
 
     return HttpResponse(jsonResponse)
+
+def perfilUser(request,nickname):
+    userSesion = User.objects.get(iduser=request.session['user'])
+    userProfile = User.objects.get(nickname=nickname)
+    resta = today.year - userProfile.age.year
+    return render(
+        request,
+        'PerfilFriend/PerfilFriend.html',
+        {
+            "user": userSesion,
+            "userProfile" : userProfile,
+            "edad": resta,
+            "tittle": userProfile.nickname,
+        }
+    )
 
 class UserView(View):
     def get(self, request):
