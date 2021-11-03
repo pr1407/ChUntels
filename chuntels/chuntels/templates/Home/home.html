@@ -19,7 +19,7 @@
                     <div class="col-lg-3 order-lg-2">
                         <div class="card-profile-image">
                             <a href="#">
-                                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg"
+                                <img src={{user.photo.url}}
                                     class="rounded-circle">
                             </a>
                         </div>
@@ -53,11 +53,11 @@
                     </div>
                     <div class="text-center">
                         <h5 class="h3">
-                            Jessica Jones<span class="font-weight-light">, 21</span>
+                            {{user.name}}<span class="font-weight-light">, {{ resta}}</span>
                         </h5>
                         <i class="fa fa-angle-down"></i>
                         <div class="h5 font-weight-300">
-                            <i class="fas fa-graduation-cap"></i> Ingenieria de Sistemas
+                            <i class="fas fa-graduation-cap"></i>  {{ user.typeCarrear }}
                         </div>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                                         class="avatar">
                                 </a>
                                 <div class="mx-3">
-                                    <a href="#" class="text-dark font-weight-600 text-sm">Jessica Jones</a>
+                                    <a href="#" class="text-dark font-weight-600 text-sm">{{user.name}}</a>
                                     <small class="d-block text-muted">hace 2 horas</small>
                                 </div>
                             </div>

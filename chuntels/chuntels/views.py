@@ -82,11 +82,17 @@ def login(request):
 
 
 def home(request):
+    today = datetime.date.today()
     if 'user' in request.session:
+
+        user = User.objects.get(iduser = request.session['user'])
+        resta = today.year - user.age.year
         return render(
             request,
             'Home/home.html',
             {
+                "user" : user,  
+                "resta" : resta,
                 "tittle": "Pagina Principal",
             }
         )
@@ -237,10 +243,17 @@ class UserViewNickName(View):
 
     def get(self, request, nickname):
         user = User.objects.get(nickname=nickname)
+        
         jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
         return JsonResponse(json.loads(jsonUser), safe=False)
 
-
+    def post(self, request, nickname):
+        print (request.POST)
+        user = User.objects.get(nickname=nickname)
+        jsonUser = json.dumps(model_to_dict(user), sort_keys=True , default= str)
+        datos = {"mensaje": "envio" , "datos" : json.loads(jsonUser)}
+        print(datos)
+        return JsonResponse(datos, safe=False)
 
 class beFriends(View):
     def post(self, request, iduser1, iduser2):

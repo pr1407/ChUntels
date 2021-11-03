@@ -10,10 +10,10 @@ class carrear(models.Model):
 class User(models.Model):
     iduser = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=50)
+    email = models.EmailField(max_length=50 , unique=True)
     password = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
-    nickname = models.CharField(max_length=50)
+    nickname = models.CharField(max_length=50 , unique=True)
     is_active = models.BooleanField(default=True)
     photo = models.ImageField(upload_to='fotosPerfil/', null=True, blank=True)
     age = models.DateTimeField(auto_now=False)
@@ -94,7 +94,6 @@ class Message(models.Model):
     files = models.FileField(upload_to='files/', null=True, blank=True)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
     state = models.ForeignKey(stateMessage, on_delete=models.CASCADE)
-
 
 class Work(models.Model):
     idwork = models.AutoField(primary_key=True)
