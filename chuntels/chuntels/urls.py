@@ -28,7 +28,7 @@ urlpatterns = [
     path('publication/', publication),
     path('api/saludo/', service),
     path('home/editdata/',changeData),
-    path('home/logout/', logout),
+    path('logout/', logout),
     path('user/', UserView.as_view() , name= 'userList'),
     path('user/<str:nickname>/', UserViewNickName.as_view() , name= 'searchUser'),
     path('api/search-person/', UserViewName.as_view() , name= 'userDetail'),

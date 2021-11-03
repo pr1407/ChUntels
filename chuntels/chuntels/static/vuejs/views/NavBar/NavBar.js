@@ -4,47 +4,69 @@ const navbar = new Vue({
     data: {
         saludo:'Hola Mundo!',
         inputsearch:"",
-        users:[
-            {
-                id:1,
-                name:"Jordan",
-                lastname:"Noblejas",
-                email:"",
-                phone:"",
-                address:"",
-                city:"",
-                state:"",
-            },
-            {
-                id:2,
-                name:"Pedro",
-                lastname:"Ruiz",
-                email:"",
-                phone:"",
-                address:"",
-                city:"",
-                state:"",
-            },
-            {
-                id:3,
-                name:"Juan",
-                lastname:"Torres",
-                email:"",
-                phone:"",
-                address:"",
-                city:"",
-                state:"",
-            }
-        ],
+        personas: [],
+        personasFiltradas: [],
     },
     methods:{
         search(){
             console.log(this.inputsearch);
+        },
+        async searchPerson(){
+
+            let body = new FormData();
+
+            body.append('nombre',this.inputsearch);
+
+            try {
+
+                let result = await axios.post('/api/search-person/',body);
+
+                if(result.status === 200){
+                    let resultData = result.data;
+                    if(resultData.valor){
+                        this.personas = resultData.data;
+                        this.personasFiltradas = resultData.data;
+                    }else{
+                        this.personas = [];
+                    }
+                }
+
+            }catch(err){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Algo salió mal, intentelo de nuevo!'
+                  })
+            }
+
         }
     },
     watch:{
         inputsearch(val){
-            console.log(val);
+            if(val.length === 1){
+                if(this.personasFiltradas.length === 0){
+                    this.searchPerson();
+                }
+            }else if(val.length > 1){
+                this.personasFiltradas = [];
+                let nombres;
+
+                for(let i = 0; i < this.personas.length; i++){
+                    nombres = this.personas[i].name.toLowerCase();
+                    if(nombres.includes(val.toLowerCase())){
+                        this.personasFiltradas.push(this.personas[i]);
+                    }
+                }
+            }else{
+                this.personasFiltradas = [];
+            }
+        },
+        personasFiltradas(val){
+            if(val.length > 0){
+                $('#dropdown-search-person').addClass('show');
+            }else{
+                $('#dropdown-search-person').removeClass('show');
+            }
         }
     }
 });

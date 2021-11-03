@@ -224,15 +224,20 @@ class UserViewName(View):
         return JsonResponse(json.loads(jsonUser), safe=False)
         
     def post(self, request):
-        print(request.POST.get('nombre'))
+        print(request.POST)
+
+        if request.POST.get('nombre') == '':
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+            return JsonResponse(datos, safe=False)
+        
         try:
             user = User.objects.filter(name__contains=request.POST.get('nombre'))
             
             jsonUser = json.dumps(list(user.values()), sort_keys=True , default= str)
-            datos = {"valor":True,"mensaje": "Lista de personas" , "datos" : json.loads(jsonUser)}
+            datos = {"valor":True,"mensaje": "Lista de personas" , "data" : json.loads(jsonUser)}
         except:
-            datos = {"valor":False,"mensaje": "No se encontró resultados" , "datos" : {}}
-        print(datos)
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        #print(datos)
         ###datos = {"valor":True,"mensaje": "envio" , "datos" : request.POST.get('nombre')}
         return JsonResponse(datos, safe=False)
 
