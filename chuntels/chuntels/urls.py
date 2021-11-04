@@ -27,7 +27,7 @@ urlpatterns = [
     path('feed/', feed),
     path('publication/', publication),
     path('api/saludo/', service),
-    path('home/editdata/',changeData),
+    path('editdata/',changeData),
     path('logout/', logout),
     path('user/', UserView.as_view() , name= 'userList'),
     path('user/<str:nickname>/', perfilUser, name= 'userDetail'),

@@ -100,7 +100,6 @@ def home(request):
     return redirect('/login')
 
 
-@login_required(login_url='/login')
 def logout(request):
     if 'user' in request.session:
         del request.session['user']
@@ -108,32 +107,31 @@ def logout(request):
 
 
 
-@login_required(login_url='/login')
 def changeData(request):
-    
+    user = User.objects.get(iduser=request.session['user'])
     formEdit = EditForm()
     
     if request.method == 'POST':
         formEdit = EditForm(request.POST , request.FILES)
         if formEdit.is_valid():
             editData = formEdit.cleaned_data
-            usuario = User.objects.get(iduser=request.session['user'])
+            
             if(editData['newUsername'] != ''):
-                usuario.name = editData['newUsername']
+                user.name = editData['newUsername']
             if(editData['newEmail'] != ''):
-                usuario.email = editData['newEmail']
+                user.email = editData['newEmail']
             if(editData['newNickname'] != ''):
-                usuario.nickname = editData['newNickname']
+                user.nickname = editData['newNickname']
             if(editData['newPassword'] != ''):
-                usuario.password = make_password(editData['newPassword'], salt=None, hasher='default')
+                user.password = make_password(editData['newPassword'], salt=None, hasher='default')
             """
             usuario.age = editData['age']
             if(editData['newCarrear'] != ''):
                 usuario.typeCarrear = editData['newCarrear']
             """
-            if(editData['newfotoPerfilUsuario'] != ''):
-                usuario.photo = editData['newfotoPerfilUsuario']
-            usuario.save()
+            if(editData['newfotoPerfilUsuario'] is not None):
+                user.photo = editData['newfotoPerfilUsuario']
+            user.save()
             return redirect('/home')
 
     return render(
@@ -141,7 +139,8 @@ def changeData(request):
             'Home/cambiarDatos.html',
             {
                 "tittle": "Cambiar Datos", 
-                "form": formEdit
+                "form": formEdit,
+                "user" : user
             }
     )
 

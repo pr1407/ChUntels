@@ -26,9 +26,9 @@ class LoginForm(forms.Form):
 
 
 class EditForm(forms.Form):
-    newUsername = forms.CharField(label='Username', max_length=100 , required=False)
-    newEmail = forms.EmailField(label='Email' , required=False)
-    newNickname = forms.CharField(label='Nickname', max_length=100 , required=False)
-    newPassword = forms.CharField(label='Password', widget=forms.PasswordInput() , required=False)
-    newfotoPerfilUsuario = forms.ImageField(label='Foto de perfil', widget=forms.FileInput() , required=False)
+    newUsername = forms.CharField(label='Username', widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=100 , required=False)
+    newEmail = forms.EmailField(label='Email' , widget=forms.EmailInput(attrs={'class': 'form-control'}), required=False)
+    newNickname = forms.CharField(label='Nickname', widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100 , required=False)
+    newPassword = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}) , required=False)
+    newfotoPerfilUsuario = forms.ImageField(label='Foto de perfil', widget=forms.FileInput(attrs={'class': 'form-control'}) , required=False)
     #newCarrear = forms.ModelChoiceField(label='Carrera', queryset=carrear.objects.all() , required=False)newfotoPerfilUsuario
