@@ -16,7 +16,7 @@
     </title>
 </head>
 
-<body class="bg-gradient-shuntels">
+<body class="bg-gradient-chuntels g-sidenav-hidden">
 
     {% block content %} {% endblock %}
 
@@ -31,7 +31,9 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% block js %} {% endblock %}
+    {% if request.path != '/login/' and request.path != '/register/' %}
     <script src="{% static '/vuejs/views/NavBar/NavBar.js' %}"></script>
+    {% endif %}
 
 </body>
 

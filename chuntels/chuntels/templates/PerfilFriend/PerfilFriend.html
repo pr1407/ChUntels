@@ -9,28 +9,37 @@
 
 {% include "../Components/navbar.html" %}
 
-<div class="container my-5"  id="perfil-friend">
+<div class="container my-5" id="perfil-friend">
     <div class="row">
         <div class="col-12">
             <div class="card card-profile">
-                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/img-1-1000x600.jpg"
-                    alt="Image placeholder" class="card-img-top">
+                <img src="https://www.adobe.com/es/express/discover/sizes/media_12fa8cb62228835a68a2d107675896c3aa41fb5e4.png?width=2000&format=webply&optimize=medium"
+                    alt="Image placeholder" class="card-img-top ">
                 <div class="row justify-content-center">
                     <div class="col-lg-3 order-lg-2">
                         <div class="card-profile-image">
                             <a href="#">
-
-                                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg"
+                                {% if userProfile.photo %}
+                                <img src={{userProfile.photo.url}} class="rounded-circle">
+                                {% else %}
+                                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
                                     class="rounded-circle">
-
+                                {% endif %}
                             </a>
                         </div>
                     </div>
                 </div>
                 <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
                     <div class="d-flex justify-content-between">
-                        <a href="#" class="btn btn-sm btn-info  mr-4 ">Connect</a>
-                        <a href="#" class="btn btn-sm btn-default float-right">Message</a>
+                        <button class="btn btn-sm btn-info  mr-4 "><i class="fas fa-heart"></i> Seguir</button>
+                        <button v-if="statusFriendRequest === 0" class="btn btn-sm btn-success float-right"
+                            @click="friendRequest('{{userProfile.name}}',{{userProfile.iduser}},{{user.iduser}})"><i class="fas fa-user-plus"></i> Enviar solicitud de
+                            amistad</button>
+                        <button v-else-if="statusFriendRequest === 1" class="btn btn-sm btn-danger float-right"
+                            @click="friendRequest('{{userProfile.name}}',{{userProfile.iduser}},{{user.iduser}})"><i class="fas fa-times"></i> Cancelar solicitud de
+                            amistad</button>
+                        <button v-else class="btn btn-sm btn-default float-right"
+                            @click="friendRequest('{{userProfile.name}}',{{userProfile.iduser}},{{user.iduser}})"><i class="fas fa-times"></i> Dejar de ser amigos</button>
                     </div>
                 </div>
                 <div class="card-body pt-0">
@@ -39,15 +48,15 @@
                             <div class="card-profile-stats d-flex justify-content-center">
                                 <div>
                                     <span class="heading">22</span>
-                                    <span class="description">Friends</span>
+                                    <span class="description">Seguidores</span>
                                 </div>
                                 <div>
-                                    <span class="heading">10</span>
-                                    <span class="description">Photos</span>
+                                    <span class="heading">5</span>
+                                    <span class="description">Trabajos</span>
                                 </div>
                                 <div>
-                                    <span class="heading">89</span>
-                                    <span class="description">Comments</span>
+                                    <span class="heading">5</span>
+                                    <span class="description">Publicaciones</span>
                                 </div>
                             </div>
                         </div>
@@ -56,37 +65,107 @@
                         <h5 class="h3">
                             {{userProfile.name}}<span class="font-weight-light">, {{edad}}</span>
                         </h5>
-                        <i class="fa fa-angle-right"></i>
+                        <i class="fa fa-angle-down"></i>
                         <div class="h5 font-weight-300">
-                            <i class="ni location_pin mr-2"></i>{{userProfile.typeCarrear}}
+                            <i class="fas fa-graduation-cap"></i> {{ userProfile.typeCarrear }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="nav-wrapper">
+                        <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab"
+                                    href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1"
+                                    aria-selected="true"><i class="fas fa-id-badge mr-2"></i>Publicaciones</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab"
+                                    href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2"
+                                    aria-selected="false"><i class="fas fa-book mr-2"></i>Trabajos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab"
+                                    href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3"
+                                    aria-selected="false"><i class="fas fa-info-circle mr-2"></i>Informacion</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-5 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col">
+                            <h6 class="h2 mb-0">
+                                {{userProfile.name}}
+                            </h6>
+                        </div>
+                        <div class="col-auto">
+                            <span class="badge badge-lg badge-success">Conectado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-7 col-12">
+            <div v-if="publicationlist.length > 0">
+                <div class="card" v-for="(item,index) in publicationlist">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <a href="#">
+                                {% if userProfile.photo %}
+                                <img src={{userProfile.photo.url}} class="avatar">
+                                {% else %}
+                                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
+                                    class="avatar">
+                                {% endif %}
+                            </a>
+                            <div class="mx-3">
+                                <a href="#" class="text-dark font-weight-600 text-sm">{{userProfile.name}}</a>
+                                <small class="d-block text-muted">[[item.date]]</small>
+                            </div>
+                        </div>
+                        <div class="pt-3">
+                            <p class="text-sm lh-160 mb-0">[[item.publication]]</p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="icon-actions">
+                            <a href="#" class="like " @click="sendLike(index)" id="btn-like">
+                                <i class="ni ni-like-2"></i>
+                                <span class="text-muted">[[item.likes]] me gusta</span>
+                            </a>
+                            <a href="#" class="like ">
+                                <i class="fas fa-comment-alt"></i>
+                                <span class="text-muted">[[item.comments]] comentario</span>
+                            </a>
+                            <a href="#" class="like ">
+                                <i class="ni ni-curved-next"></i>
+                                <span class="text-muted">[[item.shareds]] compartidos</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="list-group list-group-flush">
-
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start py-4 px-4">
-
-                    <div class="d-flex w-100 justify-content-between">
-                        <div>
-                            <div class="d-flex w-100 align-items-center">
-                                <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                                    alt="Image placeholder" class="avatar avatar-xs mr-2" />
-                                <h5 class="mb-1">Tim</h5>
-                            </div>
-                        </div>
-                        <small>2 hrs ago</small>
+            <div v-else>
+                <div class="card">
+                    <div class="card-body text-center">
+                        <p class="text-muted text-sm lh-160 mb-0"><i class="fas fa-info-circle"></i> No hay nada que
+                            mostrar</p>
                     </div>
-                    <h4 class="mt-3 mb-1"> New order for Argon Dashboard</h4>
-                    <p class="text-sm mb-0">Doasdnec id elit non mi porta gravida at eget metus. Maecenas sed diam eget
-                        risus varius blandit.</p>
-
-                </a>
-
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 {% endblock %}

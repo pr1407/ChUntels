@@ -10,7 +10,6 @@
 {% include "../Components/navbar.html" %}
 
 <div class="container mt-5" id="publication">
-    <p>[[ saludo ]]</p>
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -52,8 +51,13 @@
                     <!-- Comments -->
 
                     <div class="media align-items-center">
+                        {% if user.photo %}
+                        <img alt="Image placeholder" class="avatar avatar-lg rounded-circle mr-4"
+                            src="{{user.photo.url}}">
+                        {% else %}
                         <img alt="Image placeholder" class="avatar avatar-lg rounded-circle mr-4"
                             src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg">
+                        {% endif %}
                         <div class="media-body">
                             <form>
                                 <textarea class="form-control" placeholder="Escribe un comentario" rows="1"></textarea>

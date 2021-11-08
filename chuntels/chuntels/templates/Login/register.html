@@ -7,8 +7,8 @@
 
 {% block content %}
 
-<div id="login" class="bg-gradient-default">
-    <div class="header py-3 py-sm-5">
+<div id="login">
+    <!--<div class="header py-3 py-sm-5">
         <div class="container">
             <div class="header-body text-center mb-7">
                 <div class="row justify-content-center">
@@ -19,12 +19,12 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container mt--7 pb-5">
+    </div>-->
+    <div class="container my-5 pb-5">
         <div class="row justify-content-center">
             <div class="col-lg-5 col-md-7">
                 <div class="card bg-secondary border-0 mb-0">
-                    <div class="card-header bg-transparent pb-5">
+                    <!--<div class="card-header bg-transparent pb-5">
                         <div class="text-muted text-center mt-2 mb-3"><small>Registrate con</small></div>
                         <div class="btn-wrapper text-center">
                             <a href="#" class="btn btn-neutral btn-icon">
@@ -38,15 +38,15 @@
                                 <span class="btn-inner--text">Google</span>
                             </a>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="card-body px-lg-5 py-lg-5">
                         <div class="text-center text-muted mb-4">
-                            <small>O crea una cuenta</small>
+                            <small>Crea una nueva cuenta</small>
                         </div>
                         {%if form.errors%}
-                            {% for error in form.non_field_errors %}
-                                    <p class="h5 text-red">El  error es : {{error}} </p>
-                            {% endfor %}
+                        {% for error in form.non_field_errors %}
+                        <p class="h5 text-red"> {{error}} </p>
+                        {% endfor %}
                         {% endif %}
                         <form role="form" action="" method="POST"> {% csrf_token %}
                             <div class="form-group mb-3">
@@ -97,15 +97,18 @@
                                 <input type="submit" class="btn btn-primary my-4" value="Ingresar">
                             </div>
                         </form>
+                        
+                        <div class="text-center">
+                            <a href="/login/" class="text-muted"><small>Tengo una cuenta</small></a>
+                        </div>
                     </div>
                 </div>
-                <div class="row mt-3">
-                    <div class="col-6">
-                        <a href="#" class="text-light"><small>Olvidaste tu contraseña?</small></a>
-                    </div>
-                    <div class="col-6 text-right">
-                        <a href="/register/" class="text-light"><small>Crea una nueva cuenta</small></a>
-                    </div>
+            </div>
+            <div class="col-lg-7 col-md-5 mb-5 mb-md-0 text-center ">
+                <div class="">
+                    <h1 class="text-white">Bienvenido!</h1>
+                    <p class="text-lead text-white">Crea una cuenta CHUNTELS!</p>
+                    <img class="img-fluid" src="https://www.easio.io/landing/images/user/login.svg" alt="img studying">
                 </div>
             </div>
         </div>

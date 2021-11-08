@@ -9,20 +9,28 @@
 
 {% include "../Components/navbar.html" %}
 
-<div class="container mt-5" id="feed">
+<div class="container my-5" id="feed">
     <div class="row">
         <div class="col-lg-4 col-md-5 col-12 d-md-block d-none">
-            <!-- List group -->
-            {% include "../Components/contactos.html" %}
+            <div class="card">
+                <div class="card-body">
+                    
+                </div>
+            </div>
         </div>
         <div class="col-lg-8 col-md-7 col-12">
 
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center my-3">
-                        <a href="#">
-                            <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg"
-                                class="avatar rounded-circle">
+                        <a href="/home/">
+                            {% if user.photo %}
+                            <img src="{{user.photo.url}}"
+                            class="avatar rounded-circle">
+                            {% else %}
+                            <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
+                            class="avatar rounded-circle">
+                            {% endif %}
                         </a>
                         <div class="mx-3 w-100">
                             <a class="form-control form-control-muted"  data-toggle="modal"
@@ -56,7 +64,7 @@
                                 <i class="ni ni-like-2"></i>
                                 <span class="text-muted">50 me gusta</span>
                             </a>
-                            <a href="#">
+                            <a href="/publication/1">
                                 <i class="fas fa-comment-alt"></i>
                                 <span class="text-muted">1 comentario</span>
                             </a>
@@ -69,12 +77,17 @@
                 </div>
                 <div class="card-footer">
                     <div class="d-flex align-items-center my-3">
-                        <a href="#">
-                            <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-4.jpg"
-                                class="avatar rounded-circle">
+                        <a href="/home/">
+                            {% if user.photo %}
+                            <img src="{{user.photo.url}}"
+                            class="avatar rounded-circle">
+                            {% else %}
+                            <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
+                            class="avatar rounded-circle">
+                            {% endif %}
                         </a>
                         <div class="mx-3 w-100">
-                            <a class="form-control form-control-muted" >Escribe un comentario...</a>
+                            <input class="form-control form-control-muted" type="text" placeholder="Escribe un comentario...">
                         </div>
                     </div>
                 </div>

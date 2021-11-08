@@ -3,66 +3,16 @@
         <h4 class="card-title mb-0">Contactos</h4>
     </div>
     <div class="card-body p-0">
-        <div class="list-group list-group-flush">
-            <li class="list-group-item">
-                <div class="form-group">
-                    <div class="input-group input-group-alternative input-group-merge">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        </div>
-                        <input class="form-control" placeholder="Buscar amigos" type="text">
-                    </div>
+        <div class="form-group mb-0">
+            <div class="input-group input-group-alternative input-group-merge">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
                 </div>
-                <div>
-                    <span class="badge badge-success badge-pill">conectados: 10</span>
-                    <span class="badge badge-primary badge-pill">total: 14</span>
-                </div>
-            </li>
-            <a href="#!" class="list-group-item list-group-item-action">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder"
-                            src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                            class="avatar rounded-circle">
-                    </div>
-                    <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h4 class="mb-0 text-sm">John Snow <span class="text-success">●</span></h4>
-        
-                            </div>
-                            <div class="text-right text-muted">
-                                <small>2 hrs</small>
-                            </div>
-                        </div>
-                        <p class="text-sm mb-0">Mensaje: <span class="text-muted">Hola</span></p>
-                    </div>
-                </div>
-            </a>
-            <a href="#!" class="list-group-item list-group-item-action">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder"
-                            src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                            class="avatar rounded-circle">
-                    </div>
-                    <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h4 class="mb-0 text-sm">John Snow <span class="text-muted">●</span></h4>
-        
-                            </div>
-                            <div class="text-right text-muted">
-                                <small>2 hrs</small>
-                            </div>
-                        </div>
-                        <p class="text-sm mb-0">Mensaje: <span class="text-muted">Hola</span></p>
-                    </div>
-                </div>
-            </a>
-            <a href="#!" class="list-group-item list-group-item-action">
+                <input class="form-control" placeholder="Buscar amigos" type="text">
+            </div>
+        </div>
+        <div class="list-group list-group-flush scrollbar-container" style="height: 300px;">
+            <a href="#" class="list-group-item list-group-item-action" @click="showChatFriend()">
                 <div class="row align-items-center">
                     <div class="col-auto">
                         <!-- Avatar -->
@@ -86,5 +36,10 @@
             </a>
         </div>
     </div>
-    <div class="card-footer"></div>
+    <div class="card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="badge badge-success badge-pill">conectados: 10</span>
+            <span class="badge badge-primary badge-pill">total: 14</span>
+        </div>
+    </div>
 </div>

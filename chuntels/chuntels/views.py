@@ -99,6 +99,22 @@ def home(request):
         )
     return redirect('/login')
 
+def chat(request):
+
+    if 'user' in request.session:
+
+        user = User.objects.get(iduser = request.session['user'])
+        resta = today.year - user.age.year
+        return render(
+            request,
+            'Chat/chat.html',
+            {
+                "user" : user,  
+                "resta" : resta,
+                "tittle": "Pagina Principal",
+            }
+        )
+    return redirect('/login')
 
 def logout(request):
     if 'user' in request.session:
@@ -148,23 +164,37 @@ def changeData(request):
 
 def feed(request):
 
-    return render(
-        request,
-        'Feed/feed.html',
-        {
-            "tittle": "Pagina Principal",
-        }
-    )
-    
-def publication(request):
+    if 'user' in request.session:
 
-    return render(
-        request,
-        'Publication/publication.html',
-        {
-            "tittle": "Pagina Principal",
-        }
-    )
+        user = User.objects.get(iduser = request.session['user'])
+        resta = today.year - user.age.year
+        return render(
+            request,
+            'Feed/feed.html',
+            {
+                "user" : user,  
+                "resta" : resta,
+                "tittle": "Pagina Principal",
+            }
+        )
+    return redirect('/login')
+    
+def publication(request,id):
+
+    if 'user' in request.session:
+
+        user = User.objects.get(iduser = request.session['user'])
+        resta = today.year - user.age.year
+        return render(
+            request,
+            'Publication/publication.html',
+            {
+                "user" : user,  
+                "resta" : resta,
+                "tittle": "Pagina Principal",
+            }
+        )
+    return redirect('/login')
 
 def service(request):
 
@@ -191,6 +221,7 @@ def perfilUser(request,nickname):
     userSesion = User.objects.get(iduser=request.session['user'])
     userProfile = User.objects.get(nickname=nickname)
     resta = today.year - userProfile.age.year
+
     return render(
         request,
         'PerfilFriend/PerfilFriend.html',
@@ -276,21 +307,16 @@ class UserViewNickName(View):
         return JsonResponse(datos, safe=False)
 
 class beFriends(View):
-    def post(self, request, iduser1, iduser2):
-        if iduser1 != iduser2:
-            user1 = User.objects.get(iduser=iduser1)
-            user2 = User.objects.get(iduser=iduser2)
-            relation= Friend(user=user1, friend=user2)
+    def post(self, request):
+        user = request.POST.get('user')
+        friend = request.POST.get('friend')
+        state = request.POST.get('state')
 
-            while relation.state <= 4:
-                if relation.state == 0:
-                    print('No se conocen')
-                elif relation.state == 1:
-                    print('Amigos')
-                elif relation.state == 2:
-                    print('Solicitud enviada')
-                elif relation.state == 3:
-                    print('Solicitud recibida')
-                elif relation.state == 4:
-                    print('Solicitud rechazada')
-        relation.save()
+        if user != friend:
+            user = User.objects.get(iduser=user)
+            friend = User.objects.get(iduser=friend)
+            relation= Friend(user=user, friend=friend)
+
+            relation.state = state
+            
+            relation.save()
