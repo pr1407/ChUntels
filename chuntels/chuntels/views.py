@@ -16,7 +16,7 @@ from bdChuntels.forms import RegisterForm, LoginForm , EditForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.views import View
 from django.http import JsonResponse
-from bdChuntels.models import User , Friend 
+from bdChuntels.models import User , Friend , Post , typePost
 
 today = datetime.date.today()
 
@@ -307,6 +307,10 @@ class UserViewNickName(View):
         return JsonResponse(datos, safe=False)
 
 class beFriends(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+        
     def post(self, request):
         user = request.POST.get('user')
         friend = request.POST.get('friend')
@@ -320,3 +324,50 @@ class beFriends(View):
             relation.state = state
             
             relation.save()
+
+class sendPublication(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+
+    def post(self, request):
+
+        user = request.POST.get('user')
+        publication = request.POST.get('publication')
+        photo = request.POST.get('photo')
+        files = request.POST.get('files')
+        #_typePost = request.POST.get('typePost')
+
+        if user == None or user == '':
+            datos = {"valor":False,"mensaje": "No se encontró usuario" , "data" : {}}
+            return JsonResponse(datos, safe=False)
+
+        if publication == None or publication == '':
+            datos = {"valor":False,"mensaje": "Debes ingresar al menos 1 caracter o archivo" , "data" : {}}
+            return JsonResponse(datos, safe=False)
+        
+        #if _typePost == None or _typePost == '':
+            #_typePost = typePost.objects.get(idtypePost=1)
+
+        user = User.objects.get(iduser=user)
+        send_post = Post(
+            content = publication,
+            created_at = today,
+            user = user,
+            #typePost = _typePost
+        )
+
+        if photo != None or photo != '':
+            send_post.photo = photo
+
+        if photo != None or photo != '':
+            send_post.files = files
+        
+        response = send_post.save()
+
+        if response == True:
+            datos = {"valor":True,"mensaje": "Publicacion realizada" , "data" : {}}
+        else:
+            datos = {"valor":False,"mensaje": "No se pudo enviar la publicacion" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)
