@@ -16,12 +16,11 @@ from bdChuntels.forms import RegisterForm, LoginForm , EditForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.views import View
 from django.http import JsonResponse
-from bdChuntels.models import User , Friend , Post , typePost
+from bdChuntels.models import User , Friend , Post , typePost , TypeNotification , Notification
 
 today = datetime.date.today()
 
 def register(request):
-
 
     if request.method == 'POST':
         formRegistro = RegisterForm(request.POST)
@@ -52,7 +51,6 @@ def register(request):
                     "form": formRegistro
                 }
             ) 
-        
    
 def login(request):
 
@@ -80,7 +78,6 @@ def login(request):
             "form": formLogin
         }
     )
-
 
 def home(request):
 
@@ -121,8 +118,6 @@ def logout(request):
         del request.session['user']
     return redirect('/login')
 
-
-
 def changeData(request):
     user = User.objects.get(iduser=request.session['user'])
     formEdit = EditForm()
@@ -159,8 +154,6 @@ def changeData(request):
                 "user" : user
             }
     )
-
-
 
 def feed(request):
 
@@ -306,41 +299,80 @@ class UserViewNickName(View):
         print(datos)
         return JsonResponse(datos, safe=False)
 
+
+
 class beFriends(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)   
-        
+    
+
     def post(self, request):
         user = request.POST.get('user')
         friend = request.POST.get('friend')
-        #Busca si existe relacion
-        relacion = Friend.objects.get(user=user,friend=friend)
-        jsonrelation = json.dumps(model_to_dict(relacion), sort_keys=True , default= str)
-        datos = {"valor":False,"mensaje": "Ya se envio la solicitud" , "data" : json.loads(jsonrelation)}
+        state = request.POST.get('state')
+        
+        try:
+            relacionInversa = Friend.objects.get(user=friend, friend=user)
+            datos = {"valor":False,"mensaje": "Ya esta amigos" , "data" : {}}
+            relacionInversa.state = state
+            if relacionInversa.state == '1':
+                datos = {"valor":True,"mensaje": "Recibiste una solicitud" , "data" : {}}
+                noti = Notification.objects.create(
+                    content="Te han enviado una solicitud de amistad",
+                    created_at = today,
+                    user=User.objects.get(iduser = user) , 
+                    receiver=User.objects.get(iduser = friend) , 
+                    typeNotification = TypeNotification.objects.get(idtypenotification = 1)
+                )
+                noti.save()
+            if relacionInversa.state == '2':
+                datos = {"valor":True,"mensaje": "Aceptaste la solicitud" , "data" : {}}
+            if relacionInversa.state == '3':
+                datos = {"valor":True,"mensaje": "Negaste la solicitud" , "data" : {}}
+            relacionInversa.save()
+            return JsonResponse(datos, safe=False)
+        except:
+            relacionInversa = None
+            datos = {"valor":False,"mensaje": "No existe una relacion" , "data" : {}}
+        
+        try:
+            relacion = Friend.objects.get(user=user,friend=friend)
+            jsonrelation = json.dumps(model_to_dict(relacion), sort_keys=True , default= str)
+            datos = {"valor":False,"mensaje": "Ya se envio la solicitud" , "data" : json.loads(jsonrelation)}
+        except:
+            relacion = None
+            datos = {"valor":False,"mensaje": "No existe una relacion" , "data" : {}}
+        
         if relacion == None:
-            #Si no existe la crea
             if user != friend:
-                user = relacion.user
-                friend = relacion.friend
-                relacion= Friend(user=user, friend=friend)
-                #relation.state = state
-                if relacion.state == '1':
+                relation = Friend(user=User.objects.get(iduser = user) , friend=User.objects.get(iduser = friend))
+                relation.state = "1" 
+                if relation.state == '1':
                     datos = {"valor":True,"mensaje": "Se ha enviado la solicitud" , "data" : {}}
-                    relacion.save()
+                    relation.save()
             else:
                 datos = {"valor":False,"mensaje": "No se puede enviar la solicitud" , "data" : {}}
-                relacion.save()
         else:
-            """if relacion.state == '1':
+            relacion.state = state
+            if relacion.state == '1':
                 datos = {"valor":True,"mensaje": "Se ha enviado la solicitud" , "data" : {}}
-                relacion.save()"""
+                
+                noti = Notification.objects.create(
+                    content="Te han enviado una solicitud de amistad",
+                    created_at = today,
+                    user=User.objects.get(iduser = user) , 
+                    receiver=User.objects.get(iduser = friend) , 
+                    typeNotification = TypeNotification.objects.get(idtypenotification = 1)
+                )
+                noti.save()
             if relacion.state == '2':
                 datos = {"valor":True,"mensaje": "Se ha aceptado la solicitud" , "data" : {}}
-                relacion.save()
             if relacion.state == '3':
                 datos = {"valor":True,"mensaje": "Se ha negado la solicitud" , "data" : {}}           
-                relacion.save()
+            
+            relacion.save()
+
         return JsonResponse(datos, safe=False)
 
 class sendPublication(View):
@@ -393,7 +425,6 @@ class sendPublication(View):
 
         return JsonResponse(datos, safe=False)
 
-
 class getPublication(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -417,3 +448,19 @@ class getPublication(View):
 
         return JsonResponse(datos, safe=False)
 
+class getNotification(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        try:
+            user = User.objects.get(iduser=request.session['user'])
+            notification = Notification.objects.filter(user=user)
+            jsonNotification = json.dumps(list(notification.values()), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)
