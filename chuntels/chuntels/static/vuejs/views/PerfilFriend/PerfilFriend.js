@@ -7,7 +7,8 @@ const perfilFriend = new Vue({
     statusFriendRequest: 0,
   },
   methods: {
-    friendRequest(name,idfriend,iduser) {
+    async getPublications() {},
+    async friendRequest(name,idfriend,iduser) {
       console.log(idfriend,'idfriend')
       console.log(iduser,'iduser')
 
