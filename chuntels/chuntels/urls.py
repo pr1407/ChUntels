@@ -18,7 +18,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from chuntels.views import login,home,feed,publication,service, register, changeData , logout , \
-UserView ,UserViewName, UserViewNickName , perfilUser, chat,beFriends,sendPublication,getPublication
+UserView ,UserViewName, UserViewNickName , perfilUser, chat,beFriends,sendPublication,getPublication , getNotification
 urlpatterns = [
 
     path('admin/', admin.site.urls),
@@ -38,6 +38,7 @@ urlpatterns = [
     path('api/send-publication/', sendPublication.as_view()),
     path('api/get-publication/<str:nickname>/', getPublication.as_view()),
     path('api/get-publication/', getPublication.as_view()),
+    path('api/get-notifications/', getNotification.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

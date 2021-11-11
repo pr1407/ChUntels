@@ -16,7 +16,7 @@ from bdChuntels.forms import RegisterForm, LoginForm , EditForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.views import View
 from django.http import JsonResponse
-from bdChuntels.models import User , Friend , Post , typePost
+from bdChuntels.models import User , Friend , Post , typePost , TypeNotification , Notification
 
 today = datetime.date.today()
 
@@ -318,6 +318,14 @@ class beFriends(View):
             relacionInversa.state = state
             if relacionInversa.state == '1':
                 datos = {"valor":True,"mensaje": "Recibiste una solicitud" , "data" : {}}
+                noti = Notification.objects.create(
+                    content="Te han enviado una solicitud de amistad",
+                    created_at = today,
+                    user=User.objects.get(iduser = user) , 
+                    receiver=User.objects.get(iduser = friend) , 
+                    typeNotification = TypeNotification.objects.get(idtypenotification = 1)
+                )
+                noti.save()
             if relacionInversa.state == '2':
                 datos = {"valor":True,"mensaje": "Aceptaste la solicitud" , "data" : {}}
             if relacionInversa.state == '3':
@@ -349,6 +357,15 @@ class beFriends(View):
             relacion.state = state
             if relacion.state == '1':
                 datos = {"valor":True,"mensaje": "Se ha enviado la solicitud" , "data" : {}}
+                
+                noti = Notification.objects.create(
+                    content="Te han enviado una solicitud de amistad",
+                    created_at = today,
+                    user=User.objects.get(iduser = user) , 
+                    receiver=User.objects.get(iduser = friend) , 
+                    typeNotification = TypeNotification.objects.get(idtypenotification = 1)
+                )
+                noti.save()
             if relacion.state == '2':
                 datos = {"valor":True,"mensaje": "Se ha aceptado la solicitud" , "data" : {}}
             if relacion.state == '3':
@@ -431,3 +448,19 @@ class getPublication(View):
 
         return JsonResponse(datos, safe=False)
 
+class getNotification(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        try:
+            user = User.objects.get(iduser=request.session['user'])
+            notification = Notification.objects.filter(user=user)
+            jsonNotification = json.dumps(list(notification.values()), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)
