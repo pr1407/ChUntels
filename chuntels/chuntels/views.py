@@ -344,7 +344,7 @@ class sendPublication(View):
         publication = request.POST.get('publication')
         photo = request.POST.get('photo')
         files = request.POST.get('files')
-        #_typePost = request.POST.get('typePost')
+        _typePost = request.POST.get('typePost')
 
         if user == None or user == '':
             datos = {"valor":False,"mensaje": "No se encontró usuario" , "data" : {}}
@@ -354,28 +354,49 @@ class sendPublication(View):
             datos = {"valor":False,"mensaje": "Debes ingresar al menos 1 caracter o archivo" , "data" : {}}
             return JsonResponse(datos, safe=False)
         
-        #if _typePost == None or _typePost == '':
-            #_typePost = typePost.objects.get(idtypePost=1)
+        if _typePost == None or _typePost == '':
+            _typePost = typePost.objects.get(idtypePost=1)
 
-        user = User.objects.get(iduser=user)
-        send_post = Post(
-            content = publication,
-            created_at = today,
-            user = user,
-            #typePost = _typePost
-        )
+        try :
+            user = User.objects.get(iduser=user)
+            send_post = Post(
+                content = publication,
+                created_at = today,
+                user = user,
+                typePost = _typePost
+            )
 
-        if photo != None or photo != '':
-            send_post.photo = photo
+            if photo != None or photo != '':
+                send_post.photo = photo
 
-        if photo != None or photo != '':
-            send_post.files = files
-        
-        response = send_post.save()
+            if photo != None or photo != '':
+                send_post.files = files
+            
+            response = send_post.save()
 
-        if response == True:
             datos = {"valor":True,"mensaje": "Publicacion realizada" , "data" : {}}
-        else:
+
+        except ValueError:
             datos = {"valor":False,"mensaje": "No se pudo enviar la publicacion" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)
+
+
+class getPublication(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, nickname):
+        try:
+            user = User.objects.get(nickname=nickname)
+
+            post = Post.objects.filter(user=user)
+
+            jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de publicaciones" , "data" : json.loads(jsonPost)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
 
         return JsonResponse(datos, safe=False)
