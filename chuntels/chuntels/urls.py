@@ -37,6 +37,7 @@ urlpatterns = [
     path('api/send-friend-request/', beFriends.as_view()),
     path('api/send-publication/', sendPublication.as_view()),
     path('api/get-publication/<str:nickname>/', getPublication.as_view()),
+    path('api/get-publication/', getPublication.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

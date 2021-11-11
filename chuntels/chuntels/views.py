@@ -366,6 +366,8 @@ class sendPublication(View):
         
         if _typePost == None or _typePost == '':
             _typePost = typePost.objects.get(idtypePost=1)
+        else:
+            _typePost = typePost.objects.get(idtypePost=_typePost)
 
         try :
             user = User.objects.get(iduser=user)
@@ -397,8 +399,12 @@ class getPublication(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, nickname):
+    def get(self, request):
         try:
+            nickname = request.GET.get('nickname',1)
+            if nickname==1 or nickname=='1':
+                nickname = User.objects.get(iduser=request.session['user']).nickname
+                print("USUARIO: "+str(nickname))
             user = User.objects.get(nickname=nickname)
 
             post = Post.objects.filter(user=user)
