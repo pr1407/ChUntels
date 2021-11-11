@@ -314,23 +314,33 @@ class beFriends(View):
     def post(self, request):
         user = request.POST.get('user')
         friend = request.POST.get('friend')
-        state = request.POST.get('state')
-
-        if user != friend:
-            user = User.objects.get(iduser=user)
-            friend = User.objects.get(iduser=friend)
-            relation= Friend(user=user, friend=friend)
-            relation.state = state
-            relation.save()
-            
-            if state == '1':
-                datos = {"valor":True,"mensaje": "Se ha enviado la solicitud" , "data" : {}}
-            elif state == '2':
-                datos = {"valor":True,"mensaje": "Se ha aceptado la solicitud" , "data" : {}},
-            elif state == '3':
-                datos = {"valor":True,"mensaje": "Se ha negado la solicitud" , "data" : {}},
+        #Busca si existe relacion
+        relacion = Friend.objects.get(user=user,friend=friend)
+        jsonrelation = json.dumps(model_to_dict(relacion), sort_keys=True , default= str)
+        datos = {"valor":False,"mensaje": "Ya se envio la solicitud" , "data" : json.loads(jsonrelation)}
+        if relacion == None:
+            #Si no existe la crea
+            if user != friend:
+                user = relacion.user
+                friend = relacion.friend
+                relacion= Friend(user=user, friend=friend)
+                #relation.state = state
+                if relacion.state == '1':
+                    datos = {"valor":True,"mensaje": "Se ha enviado la solicitud" , "data" : {}}
+                    relacion.save()
+            else:
+                datos = {"valor":False,"mensaje": "No se puede enviar la solicitud" , "data" : {}}
+                relacion.save()
         else:
-            datos = {"valor":False,"mensaje": "No se puede enviar la solicitud" , "data" : {}}
+            """if relacion.state == '1':
+                datos = {"valor":True,"mensaje": "Se ha enviado la solicitud" , "data" : {}}
+                relacion.save()"""
+            if relacion.state == '2':
+                datos = {"valor":True,"mensaje": "Se ha aceptado la solicitud" , "data" : {}}
+                relacion.save()
+            if relacion.state == '3':
+                datos = {"valor":True,"mensaje": "Se ha negado la solicitud" , "data" : {}}           
+                relacion.save()
         return JsonResponse(datos, safe=False)
 
 class sendPublication(View):
@@ -400,3 +410,4 @@ class getPublication(View):
             datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
 
         return JsonResponse(datos, safe=False)
+
