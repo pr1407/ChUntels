@@ -16,7 +16,7 @@ from bdChuntels.forms import RegisterForm, LoginForm , EditForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.views import View
 from django.http import JsonResponse
-from bdChuntels.models import User , Friend 
+from bdChuntels.models import User , Friend , Post , typePost
 
 today = datetime.date.today()
 
@@ -99,6 +99,22 @@ def home(request):
         )
     return redirect('/login')
 
+def chat(request):
+
+    if 'user' in request.session:
+
+        user = User.objects.get(iduser = request.session['user'])
+        resta = today.year - user.age.year
+        return render(
+            request,
+            'Chat/chat.html',
+            {
+                "user" : user,  
+                "resta" : resta,
+                "tittle": "Pagina Principal",
+            }
+        )
+    return redirect('/login')
 
 def logout(request):
     if 'user' in request.session:
@@ -148,23 +164,37 @@ def changeData(request):
 
 def feed(request):
 
-    return render(
-        request,
-        'Feed/feed.html',
-        {
-            "tittle": "Pagina Principal",
-        }
-    )
-    
-def publication(request):
+    if 'user' in request.session:
 
-    return render(
-        request,
-        'Publication/publication.html',
-        {
-            "tittle": "Pagina Principal",
-        }
-    )
+        user = User.objects.get(iduser = request.session['user'])
+        resta = today.year - user.age.year
+        return render(
+            request,
+            'Feed/feed.html',
+            {
+                "user" : user,  
+                "resta" : resta,
+                "tittle": "Pagina Principal",
+            }
+        )
+    return redirect('/login')
+    
+def publication(request,id):
+
+    if 'user' in request.session:
+
+        user = User.objects.get(iduser = request.session['user'])
+        resta = today.year - user.age.year
+        return render(
+            request,
+            'Publication/publication.html',
+            {
+                "user" : user,  
+                "resta" : resta,
+                "tittle": "Pagina Principal",
+            }
+        )
+    return redirect('/login')
 
 def service(request):
 
@@ -191,6 +221,7 @@ def perfilUser(request,nickname):
     userSesion = User.objects.get(iduser=request.session['user'])
     userProfile = User.objects.get(nickname=nickname)
     resta = today.year - userProfile.age.year
+
     return render(
         request,
         'PerfilFriend/PerfilFriend.html',
@@ -276,21 +307,67 @@ class UserViewNickName(View):
         return JsonResponse(datos, safe=False)
 
 class beFriends(View):
-    def post(self, request, iduser1, iduser2):
-        if iduser1 != iduser2:
-            user1 = User.objects.get(iduser=iduser1)
-            user2 = User.objects.get(iduser=iduser2)
-            relation= Friend(user=user1, friend=user2)
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+        
+    def post(self, request):
+        user = request.POST.get('user')
+        friend = request.POST.get('friend')
+        state = request.POST.get('state')
 
-            while relation.state <= 4:
-                if relation.state == 0:
-                    print('No se conocen')
-                elif relation.state == 1:
-                    print('Amigos')
-                elif relation.state == 2:
-                    print('Solicitud enviada')
-                elif relation.state == 3:
-                    print('Solicitud recibida')
-                elif relation.state == 4:
-                    print('Solicitud rechazada')
-        relation.save()
+        if user != friend:
+            user = User.objects.get(iduser=user)
+            friend = User.objects.get(iduser=friend)
+            relation= Friend(user=user, friend=friend)
+
+            relation.state = state
+            
+            relation.save()
+
+class sendPublication(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+
+    def post(self, request):
+
+        user = request.POST.get('user')
+        publication = request.POST.get('publication')
+        photo = request.POST.get('photo')
+        files = request.POST.get('files')
+        #_typePost = request.POST.get('typePost')
+
+        if user == None or user == '':
+            datos = {"valor":False,"mensaje": "No se encontró usuario" , "data" : {}}
+            return JsonResponse(datos, safe=False)
+
+        if publication == None or publication == '':
+            datos = {"valor":False,"mensaje": "Debes ingresar al menos 1 caracter o archivo" , "data" : {}}
+            return JsonResponse(datos, safe=False)
+        
+        #if _typePost == None or _typePost == '':
+            #_typePost = typePost.objects.get(idtypePost=1)
+
+        user = User.objects.get(iduser=user)
+        send_post = Post(
+            content = publication,
+            created_at = today,
+            user = user,
+            #typePost = _typePost
+        )
+
+        if photo != None or photo != '':
+            send_post.photo = photo
+
+        if photo != None or photo != '':
+            send_post.files = files
+        
+        response = send_post.save()
+
+        if response == True:
+            datos = {"valor":True,"mensaje": "Publicacion realizada" , "data" : {}}
+        else:
+            datos = {"valor":False,"mensaje": "No se pudo enviar la publicacion" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)

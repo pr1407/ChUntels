@@ -1,0 +1,52 @@
+{% extends "../base.html" %}
+
+{% load static %}
+
+{% block title %} Chat page {% endblock %}
+
+
+{% block content %}
+
+{% include "../Components/navbar.html" %}
+
+<div class="container my-5" id="chat">
+    <div class="row">
+        <div class="col-lg-4 col-md-5 col-12 d-md-block d-none" id="card-friends">
+            <!-- List group -->
+            {% include "../Components/contactos.html" %}
+        </div>
+        <div class="col-lg-8 col-md-7 col-12" id="card-chat">
+
+            <div class="card">
+                <div class="card-header align-items-center">
+                    <button class="btn d-md-none d-inline-block" @click="showFriendList()"><i class="fas fa-chevron-left"></i></button>
+                    <img alt="Image placeholder"
+                    src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
+                    class="avatar rounded-circle">
+                    <h4 class="mb-0 ml-2 text-sm d-inline-block">John Snow <span class="text-success">●</span></h4>
+                </div>
+                <div class="card-body scrollbar-container" style="height:260px">
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex align-items-center my-3">
+                        <a href="/home/">
+                            <img src="{{user.photo.url}}"
+                                class="avatar rounded-circle">
+                        </a>
+                        <div class="mx-3 w-100">
+                            <input class="form-control form-control-muted" type="text" placeholder="Escribe un mensaje...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static '/vuejs/views/Chat/Chat.js' %}"></script>
+
+{% endblock %}

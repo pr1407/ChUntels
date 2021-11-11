@@ -2,14 +2,14 @@
 
 {% load static %}
 
-{% block title %} Login page {% endblock %}
+{% block title %} Cambiar datos {% endblock %}
 
 
 {% block content %}
 
 {% include "../Components/navbar.html" %}
 
-<div class="container">
+<div class="container my-5">
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form  method="post" enctype='multipart/form-data'> {% csrf_token %}
+                    <form method="post" enctype='multipart/form-data'> {% csrf_token %}
                         <h6 class="heading-small text-muted mb-4">Informacion de ususario</h6>
                         <div class="pl-lg-4">
                             <div class="row">
@@ -62,9 +62,11 @@
                                         {{form.newfotoPerfilUsuario}}
                                     </div>
                                 </div>
-                                <div class="col-lg-6">                            
-                                <div class="text-center">
-                                    <input type="submit" class="btn btn-primary my-4" value="Enviar">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label text-white">ENVIAR</label>
+                                        <input type="submit" class="btn btn-primary btn-block" value="Enviar">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -79,6 +81,6 @@
 
 {% block js %}
 
-<script src="{% static '/vuejs/views/Login/Login.js' %}"></script>
+<!--<script src="{% static '/vuejs/views/Login/Login.js' %}"></script>-->
 
 {% endblock %}
