@@ -320,10 +320,18 @@ class beFriends(View):
             user = User.objects.get(iduser=user)
             friend = User.objects.get(iduser=friend)
             relation= Friend(user=user, friend=friend)
-
             relation.state = state
-            
             relation.save()
+            
+            if state == '1':
+                datos = {"valor":True,"mensaje": "Se ha enviado la solicitud" , "data" : {}}
+            elif state == '2':
+                datos = {"valor":True,"mensaje": "Se ha aceptado la solicitud" , "data" : {}},
+            elif state == '3':
+                datos = {"valor":True,"mensaje": "Se ha negado la solicitud" , "data" : {}},
+        else:
+            datos = {"valor":False,"mensaje": "No se puede enviar la solicitud" , "data" : {}}
+        return JsonResponse(datos, safe=False)
 
 class sendPublication(View):
     @method_decorator(csrf_exempt)
