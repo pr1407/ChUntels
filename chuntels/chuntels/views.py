@@ -16,7 +16,7 @@ from bdChuntels.forms import RegisterForm, LoginForm , EditForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.views import View
 from django.http import JsonResponse
-from bdChuntels.models import User , Friend , Post , typePost , TypeNotification , Notification
+from bdChuntels.models import User , Friend , Post , typePost , TypeNotification , Notification , Coments
 
 today = datetime.date.today()
 
@@ -299,8 +299,6 @@ class UserViewNickName(View):
         print(datos)
         return JsonResponse(datos, safe=False)
 
-
-
 class beFriends(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -361,8 +359,8 @@ class beFriends(View):
                 noti = Notification.objects.create(
                     content="Te han enviado una solicitud de amistad",
                     created_at = today,
-                    user=User.objects.get(iduser = user) , 
-                    receiver=User.objects.get(iduser = friend) , 
+                    user= User.objects.get(iduser = user) , 
+                    receiver= User.objects.get(iduser = friend) , 
                     typeNotification = TypeNotification.objects.get(idtypenotification = 1)
                 )
                 noti.save()
@@ -416,7 +414,7 @@ class sendPublication(View):
             if photo != None or photo != '':
                 send_post.files = files
             
-            response = send_post.save()
+            send_post.save()
 
             datos = {"valor":True,"mensaje": "Publicacion realizada" , "data" : {}}
 
@@ -463,4 +461,78 @@ class getNotification(View):
         except:
             datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
 
+        return JsonResponse(datos, safe=False)
+
+class getFriends(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def get(self, request):
+        try:
+            user = User.objects.get(iduser=request.session['user'])
+            friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
+            jsonPost = json.dumps(list(friends.values()), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de amigos" , "data" : json.loads(jsonPost)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        return JsonResponse(datos, safe=False) 
+
+class getFriendPublications(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def get(self, request):
+        try:
+            user = User.objects.get(iduser=request.session['user'])
+            friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
+            PostFriends = Post.objects.filter(friend = friends)
+            jsonPost = json.dumps(list(PostFriends.values()), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonPost)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+class comentPublication(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        user = User.objects.get(iduser=request.session['user'])
+        post = request.POST.get('idpublication')
+        coment = request.POST.get('coment')
+        photo = request.POST.get('photo')
+        files = request.POST.get('files')
+        try:
+            post = Post.objects.get(idpost=post)
+            coment = Coments(
+                content = publication,
+                created_at = today,
+                user = user,
+                post = post
+            )
+            if photo != None or photo != '':
+                coment.photo = photo
+            
+            if files != None or files != '':
+                coment.files = files
+
+            coment.save()
+            datos = {"valor":True,"mensaje": "Comentario realizado" , "data" : {}}
+        except:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el comentario" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+class getPublicationComents(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def get(self, request):
+        try:
+            post = request.GET.get('idpublication')
+            post = Post.objects.get(idpost=post)
+            coments = Coments.objects.filter(post=post)
+            jsonComents = json.dumps(list(coments.values()), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de comentarios" , "data" : json.loads(jsonComents)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : {}}
         return JsonResponse(datos, safe=False)
