@@ -6,8 +6,32 @@ const navbar = new Vue({
         inputsearch:"",
         personas: [],
         personasFiltradas: [],
+        notifications: []
     },
     methods:{
+        async seeNotifications(){
+            console.log('tas clickeando')
+            if(this.notifications.length > 0){
+                return;
+            }
+
+            try{
+                let response = await axios.get('/api/get-notifications/')
+                
+                let responseData = response.data;
+                if(responseData.valor){
+                    this.notifications = responseData.data
+                }
+            }
+            catch(err){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Algo salió mal, intentelo de nuevo!'
+                  })
+            }
+
+        },
         search(){
             console.log(this.inputsearch);
         },
@@ -68,5 +92,8 @@ const navbar = new Vue({
                 $('#dropdown-search-person').removeClass('show');
             }
         }
+    },
+    mounted(){
+        this.seeNotifications()
     }
 });
