@@ -514,6 +514,16 @@ class getFriendPublications(View):
         except:
             datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : {}}
         return JsonResponse(datos, safe=False)
+    def post(self, request):
+        try:
+            user = User.objects.get(iduser=request.POST.get('user'))
+            friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
+            PostFriends = Post.objects.filter(friend = friends)
+            jsonPost = json.dumps(list(PostFriends.values()), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonPost)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : {}}
+        return JsonResponse(datos, safe=False)
 
 class comentPublication(View):
     @method_decorator(csrf_exempt)
