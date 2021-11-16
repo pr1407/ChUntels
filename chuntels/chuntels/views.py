@@ -62,12 +62,17 @@ def login(request):
 
         if formLogin.is_valid():
             loginUsuario = formLogin.cleaned_data
-            usuario = User.objects.get(email = loginUsuario['email'])
-            if check_password(loginUsuario['password'], usuario.password):
-                request.session['user'] = usuario.iduser
-                return redirect('/home')
-            else:
-                return redirect('/login')   
+            try:
+                usuario = User.objects.get(name = loginUsuario['username'])
+                if check_password(loginUsuario['password'], usuario.password):
+                    request.session['user'] = usuario.iduser
+                    return redirect('/home')
+                else:
+                    return redirect('/login')
+            except User.DoesNotExist:
+                #return redirect('/login')
+                print("error")
+            
 
 
     return render(  
@@ -430,10 +435,9 @@ class getPublication(View):
 
     def get(self, request):
         try:
-            nickname = request.GET.get('nickname',1)
-            if nickname==1 or nickname=='1':
-                nickname = User.objects.get(iduser=request.session['user']).nickname
-                print("USUARIO: "+str(nickname))
+            
+            nickname = User.objects.get(iduser=request.session['user']).nickname
+            print("USUARIO: "+str(nickname))
             user = User.objects.get(nickname=nickname)
 
             post = Post.objects.filter(user=user)
@@ -445,6 +449,19 @@ class getPublication(View):
             datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
 
         return JsonResponse(datos, safe=False)
+    def post(self, request):
+        try:
+            user = request.POST.get('user')
+            user = User.objects.get(nickname=user)
+
+            post = Post.objects.filter(user=user)
+
+            jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de publicaciones" , "data" : json.loads(jsonPost)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        return JsonResponse(datos, safe=False)
 
 class getNotification(View):
     @method_decorator(csrf_exempt)
@@ -455,7 +472,13 @@ class getNotification(View):
         try:
             user = User.objects.get(iduser=request.session['user'])
             notification = Notification.objects.filter(user=user)
-            jsonNotification = json.dumps(list(notification.values()), sort_keys=True , default= str)
+            values=notification.values()
+            receiver = values[0]['receiver_id']
+            friend = User.objects.filter(iduser=receiver)
+            receiver = friend.values()[0]
+            values[0]['receiver'] = receiver
+            #print(values[0]['receiver'])
+            jsonNotification = json.dumps(list(values), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
         except:

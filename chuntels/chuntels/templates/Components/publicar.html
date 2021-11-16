@@ -11,14 +11,19 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">
-                        <div class="d-flex w-100 align-items-center mb-2"><img
-                                src="{{user.photo.url}}"
-                                alt="Image placeholder" class="avatar avatar-xs mr-2">
+                        <div class="d-flex w-100 align-items-center mb-2">
+                            {% if user.photo %}
+                            <img src="{{user.photo.url}}" alt="Image placeholder" class="avatar avatar-xs mr-2">
+                            {% else %}
+                            <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
+                                class="avatar avatar-xs mr-2">
+                            {% endif %}
                             <h5 class="mb-1">{{user.name}}</h5>
                         </div>
                     </label>
-                    <textarea v-model="publish" class="form-control form-control-flush" placeholder="¿Qué quieres compartir?"
-                        id="exampleFormControlTextarea1" rows="3" style="resize: none;"></textarea>
+                    <textarea v-model="publish" class="form-control form-control-flush"
+                        placeholder="¿Qué quieres compartir?" id="exampleFormControlTextarea1" rows="3"
+                        style="resize: none;"></textarea>
                 </div>
                 <button type="button" class="btn btn-slack btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fas fa-photo-video"></i></span>
@@ -28,7 +33,8 @@
                 </button>
             </div>
             <div class="modal-footer">
-                <button id="btn-publish" @click="sendPublish({{user.iduser}})"type="button" class="btn btn-facebook btn-block" disabled>Publicar</button>
+                <button id="btn-publish" @click="sendPublish({{user.iduser}})" type="button"
+                    class="btn btn-facebook btn-block" disabled>Publicar</button>
             </div>
         </div>
     </div>

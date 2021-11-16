@@ -20,7 +20,7 @@
                         <div class="card-profile-image">
                             <a href="#">
                                 {% if userProfile.photo %}
-                                <img src={{userProfile.photo.url}} class="rounded-circle">
+                                <img src={{userProfile.photo.url}} class="rounded-circle" style="width: 150px;height: 150px">
                                 {% else %}
                                 <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
                                     class="rounded-circle">
@@ -129,11 +129,11 @@
                             </a>
                             <div class="mx-3">
                                 <a href="#" class="text-dark font-weight-600 text-sm">{{userProfile.name}}</a>
-                                <small class="d-block text-muted">[[item.date]]</small>
+                                <small class="d-block text-muted">[[item.created_at]]</small>
                             </div>
                         </div>
                         <div class="pt-3">
-                            <p class="text-sm lh-160 mb-0">[[item.publication]]</p>
+                            <p class="text-sm lh-160 mb-0">[[item.content]]</p>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -142,7 +142,7 @@
                                 <i class="ni ni-like-2"></i>
                                 <span class="text-muted">[[item.likes]] me gusta</span>
                             </a>
-                            <a href="#" class="like ">
+                            <a :href="'/publication/'+item.idpost" class="like ">
                                 <i class="fas fa-comment-alt"></i>
                                 <span class="text-muted">[[item.comments]] comentario</span>
                             </a>

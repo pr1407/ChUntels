@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields.related import ManyToManyField
 
 # Create your models here.
 class carrear(models.Model):
@@ -18,6 +19,8 @@ class User(models.Model):
     photo = models.ImageField(upload_to='fotosPerfil/', null=True, blank=True)
     age = models.DateTimeField(auto_now=False)
     typeCarrear = models.ForeignKey(carrear, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
 
 class typePost(models.Model):
     idtypePost = models.AutoField(primary_key=True)
@@ -27,6 +30,8 @@ class TypeNotification(models.Model):
     idtypenotification = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 
 class Notification(models.Model):
     idnotification = models.AutoField(primary_key=True)
@@ -35,6 +40,9 @@ class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiverNotification')
     typeNotification = models.ForeignKey(TypeNotification, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.content
+
 
 class Post(models.Model):
     idpost = models.AutoField(primary_key=True)

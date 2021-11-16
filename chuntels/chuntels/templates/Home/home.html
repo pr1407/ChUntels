@@ -20,7 +20,12 @@
                     <div class="col-lg-3 order-lg-2">
                         <div class="card-profile-image">
                             <a href="#">
-                                <img src={{user.photo.url}} class="rounded-circle">
+                                {% if user.photo %}
+                                <img src={{user.photo.url}} class="rounded-circle" style="width: 150px;height: 150px">
+                                {% else %}
+                                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
+                                    class="rounded-circle">
+                                {% endif %}
                             </a>
                         </div>
                     </div>
@@ -104,7 +109,12 @@
                         <div class="col-auto">
                             <!-- Avatar -->
                             <a href="/home/" class="">
+                                {% if user.photo %}
                                 <img alt="Image placeholder" class="avatar rounded-circle" src="{{user.photo.url}}">
+                                {% else %}
+                                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
+                                    class="avatar rounded-circle">
+                                {% endif %}
                             </a>
                         </div>
                         <div class="col">
@@ -125,7 +135,12 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <a href="#">
+                                {% if user.photo %}
                                 <img src={{user.photo.url}} class="avatar">
+                                {% else %}
+                                <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
+                                    class="avatar">
+                                {% endif %}
                             </a>
                             <div class="mx-3">
                                 <a href="#" class="text-dark font-weight-600 text-sm">{{user.name}}</a>

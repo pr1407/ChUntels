@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="list-group list-group-flush scrollbar-container" style="height: 300px;">
-            <a href="#" class="list-group-item list-group-item-action" @click="showChatFriend()">
+            <a href="#" class="list-group-item list-group-item-action" v-for="(item,key) in friends" @click="showChatFriend(item)">
                 <div class="row align-items-center">
                     <div class="col-auto">
                         <!-- Avatar -->
@@ -23,7 +23,7 @@
                     <div class="col ml--2">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="mb-0 text-sm">John Snow <span class="text-success">●</span></h4>
+                                <h4 class="mb-0 text-sm">[[item.friend_id]] <span class="text-success">●</span></h4>
         
                             </div>
                             <div class="text-right text-muted">
