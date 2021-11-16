@@ -16,7 +16,7 @@ from bdChuntels.forms import RegisterForm, LoginForm , EditForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.views import View
 from django.http import JsonResponse
-from bdChuntels.models import User , Friend , Post , typePost , TypeNotification , Notification , Coments
+from bdChuntels.models import *
 
 today = datetime.date.today()
 
@@ -478,6 +478,30 @@ class getNotification(View):
             receiver = friend.values()[0]
             values[0]['receiver'] = receiver
             #print(values[0]['receiver'])
+            jsonNotification = json.dumps(list(receiver), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)
+    def post(self, request):
+        try:
+            user = User.objects.get(iduser=request.POST.get('user'))
+            notification = Notification.objects.filter(user=user)
+            values=notification.values()
+            for value in values:
+                receiver = value['receiver_id']
+                friend = User.objects.filter(iduser=receiver)
+                receiver = friend.values()
+                del value['receiver_id']
+                for rec in receiver:
+                    del rec['password']
+                    del rec['created_at']
+                    carrera = carrear.objects.filter(idcarrera=rec['typeCarrear_id'])
+                    rec['carrera'] = carrera.values()[0]['nombre']
+                    del rec['typeCarrear_id']
+                value['receiver'] = receiver[0]
             jsonNotification = json.dumps(list(values), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
