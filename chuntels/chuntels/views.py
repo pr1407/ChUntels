@@ -965,7 +965,6 @@ class doLikeComents(View):
             datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
         return JsonResponse(datos, safe=False)
 
-
 class getLikeComents(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

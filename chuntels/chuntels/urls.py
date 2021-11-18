@@ -44,14 +44,14 @@ urlpatterns = [
     path('api/get-publication-coments/', getPublicationComents.as_view()),
     path('api/send-likes-post/', doLikePost.as_view()),
     path('api/get-likes-post/', getLikesPost.as_view()),
-    path('api/get-likes-works/', getLikesWorks.as_view()),
     path('api/send-work/', sendWork.as_view()),
-    path('api/send-cocreators-work/', sendCocreators.as_view()),
-    path('api/get-works/', getWorks.as_view()),
-    path('api/get-colaborators-works/', getColaboratorsWorks.as_view()),
-    path('api/send-likes-works/', doLikeWork.as_view()),
-    path('api/send-likes-coments/', doLikeComents.as_view()),
-    path('api/get-likes-coments/', getLikeComents.as_view()),
+    path('api/get-work/', getWorks.as_view()),
+    path('api/send-colaborators-work/', sendCocreators.as_view()),
+    path('api/get-colaborators-work/', getColaboratorsWorks.as_view()),
+    path('api/send-likes-work/', doLikeWork.as_view()),
+    path('api/get-likes-work/', getLikesWorks.as_view()),
+    path('api/send-likes-coment/', doLikeComents.as_view()),
+    path('api/get-likes-coment/', getLikeComents.as_view()),
 
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
