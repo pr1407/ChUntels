@@ -18,7 +18,8 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from chuntels.views import login,home,feed,publication,service, register, changeData , logout , \
-UserView ,UserViewName, UserViewNickName , perfilUser, chat,beFriends,sendPublication,getPublication , getNotification , getFriends
+UserView ,UserViewName, UserViewNickName , perfilUser, chat,beFriends,sendPublication, getPublication , getNotification , getFriends , \
+getFriendPublications , comentPublication , getPublicationComents
 urlpatterns = [
 
     path('admin/', admin.site.urls),
@@ -40,6 +41,11 @@ urlpatterns = [
     path('api/get-publication/', getPublication.as_view()),
     path('api/get-notifications/', getNotification.as_view()),
     path('api/get-friends/', getFriends.as_view() , name= 'userDetail'),
+    path('api/get-friends/<str:nickname>/', getFriends.as_view() , name= 'userDetail'),
+    
+    path('api/get-friends-publications/', getFriendPublications.as_view()),
+    path('api/coment-publication/', comentPublication.as_view()),
+    path('api/get-publication-coments/', getPublicationComents.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

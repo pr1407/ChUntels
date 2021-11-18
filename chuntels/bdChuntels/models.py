@@ -43,7 +43,6 @@ class Notification(models.Model):
     def __str__(self):
         return self.content
 
-
 class Post(models.Model):
     idpost = models.AutoField(primary_key=True)
     content = models.TextField()
@@ -82,6 +81,7 @@ class Friend(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE , related_name='personUser')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
     state = models.CharField(max_length=1 , default='0')
+    
 
 class stateMessage(models.Model):
     idstateMessage = models.AutoField(primary_key=True)

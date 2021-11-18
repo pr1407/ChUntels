@@ -435,13 +435,10 @@ class getPublication(View):
 
     def get(self, request):
         try:
-            
             nickname = User.objects.get(iduser=request.session['user']).nickname
             print("USUARIO: "+str(nickname))
             user = User.objects.get(nickname=nickname)
-
             post = Post.objects.filter(user=user)
-
             jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de publicaciones" , "data" : json.loads(jsonPost)}
@@ -451,11 +448,9 @@ class getPublication(View):
         return JsonResponse(datos, safe=False)
     def post(self, request):
         try:
-            user = request.POST.get('user')
-            user = User.objects.get(nickname=user)
-
+            user = User.objects.get(iduser=request.POST.get('user'))
+            """user = User.objects.get(nickname=user)"""
             post = Post.objects.filter(user=user)
-
             jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de publicaciones" , "data" : json.loads(jsonPost)}
@@ -473,23 +468,6 @@ class getNotification(View):
             user = User.objects.get(iduser=request.session['user'])
             notification = Notification.objects.filter(user=user)
             values=notification.values()
-            receiver = values[0]['receiver_id']
-            friend = User.objects.filter(iduser=receiver)
-            receiver = friend.values()[0]
-            values[0]['receiver'] = receiver
-            #print(values[0]['receiver'])
-            jsonNotification = json.dumps(list(receiver), sort_keys=True , default= str)
-
-            datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
-
-        return JsonResponse(datos, safe=False)
-    def post(self, request):
-        try:
-            user = User.objects.get(iduser=request.POST.get('user'))
-            notification = Notification.objects.filter(user=user)
-            values=notification.values()
             for value in values:
                 receiver = value['receiver_id']
                 friend = User.objects.filter(iduser=receiver)
@@ -501,7 +479,38 @@ class getNotification(View):
                     carrera = carrear.objects.filter(idcarrera=rec['typeCarrear_id'])
                     rec['carrera'] = carrera.values()[0]['nombre']
                     del rec['typeCarrear_id']
+                
                 value['receiver'] = receiver[0]
+
+            jsonNotification = json.dumps(list(values), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)
+    def post(self, request):
+        try:
+            user = User.objects.get(iduser=request.POST.get('user'))
+            notification = Notification.objects.filter(user=user)
+            values= notification.values()
+            for value in values:
+                receiver = value['receiver_id']
+                friend = User.objects.filter(iduser=receiver)
+                receiver = friend.values()
+                del value['receiver_id']
+                for rec in receiver:
+                    del rec['password']
+                    del rec['created_at']
+                    carrera = carrear.objects.filter(idcarrera=rec['typeCarrear_id'])
+                    rec['carrera'] = carrera.values()[0]['nombre']
+                    del rec['typeCarrear_id']
+                
+                value['receiver'] = receiver[0]
+            
+            """listReceiver = values['receiver_id']
+            friend = User.objects.filter(iduser=listReceiver)
+            print(friend)"""
             jsonNotification = json.dumps(list(values), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
@@ -518,11 +527,79 @@ class getFriends(View):
         try:
             user = User.objects.get(iduser=request.session['user'])
             friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
-            jsonPost = json.dumps(list(friends.values()), sort_keys=True , default= str)
-            datos = {"valor":True,"mensaje": "Lista de amigos" , "data" : json.loads(jsonPost)}
+            values = friends.values()
+            for value in values:
+                useR = value['user_id']
+                frienD = value['friend_id']
+                if useR == user.iduser:
+                    friend = User.objects.filter(iduser=frienD)
+                    frienD = friend.values()
+                    for fri in frienD:
+                        del fri['password']
+                        del fri['created_at']
+                        carrera = carrear.objects.filter(idcarrera=fri['typeCarrear_id'])
+                        fri['carrera'] = carrera.values()[0]['nombre']
+                        del fri['typeCarrear_id']
+
+                    value['friend'] = frienD[0]
+                else:
+                    friend = User.objects.filter(iduser=useR)
+                    useR = friend.values()
+                    for fri in useR:
+                        del fri['password']
+                        del fri['created_at']
+                        carrera = carrear.objects.filter(idcarrera=fri['typeCarrear_id'])
+                        fri['carrera'] = carrera.values()[0]['nombre']
+                        del fri['typeCarrear_id']
+                    value['friend'] = useR[0]
+                del value['user_id']
+                del value['friend_id']
+                del value['idfriend']  
+            jsonFriends = json.dumps(list(values), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de amigos" , "data" : json.loads(jsonFriends)}
         except:
             datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
-        return JsonResponse(datos, safe=False) 
+        return JsonResponse(datos, safe=False)
+    
+    def post(self, request):
+        try:
+            user = User.objects.get(iduser=request.POST.get('user'))
+            friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
+            values = friends.values()
+            for value in values:
+                useR = value['user_id']
+                frienD = value['friend_id']
+                if useR == user.iduser:
+                    friend = User.objects.filter(iduser=frienD)
+                    frienD = friend.values()
+                    for fri in frienD:
+                        del fri['password']
+                        del fri['created_at']
+                        carrera = carrear.objects.filter(idcarrera=fri['typeCarrear_id'])
+                        fri['carrera'] = carrera.values()[0]['nombre']
+                        del fri['typeCarrear_id']
+
+                    value['friend'] = frienD[0]
+                else:
+                    friend = User.objects.filter(iduser=useR)
+                    useR = friend.values()
+                    for fri in useR:
+                        del fri['password']
+                        del fri['created_at']
+                        carrera = carrear.objects.filter(idcarrera=fri['typeCarrear_id'])
+                        fri['carrera'] = carrera.values()[0]['nombre']
+                        del fri['typeCarrear_id']
+                    value['friend'] = useR[0]
+                del value['user_id']
+                del value['friend_id']
+                del value['idfriend']  
+            jsonFriends = json.dumps(list(values), sort_keys=True , default= str)
+
+            datos = {"valor":True,"mensaje": "Lista de amigos" , "data" : json.loads(jsonFriends)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        return JsonResponse(datos, safe=False)
 
 class getFriendPublications(View):
     @method_decorator(csrf_exempt)
@@ -533,8 +610,9 @@ class getFriendPublications(View):
             user = User.objects.get(iduser=request.session['user'])
             friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
             PostFriends = Post.objects.filter(friend = friends)
-            jsonPost = json.dumps(list(PostFriends.values()), sort_keys=True , default= str)
-            datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonPost)}
+            values = PostFriends.values()
+            jsonFriendPublications = json.dumps(list(values), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonFriendPublications)}
         except:
             datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : {}}
         return JsonResponse(datos, safe=False)
@@ -542,9 +620,14 @@ class getFriendPublications(View):
         try:
             user = User.objects.get(iduser=request.POST.get('user'))
             friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
-            PostFriends = Post.objects.filter(friend = friends)
-            jsonPost = json.dumps(list(PostFriends.values()), sort_keys=True , default= str)
-            datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonPost)}
+            for friend in friends:
+                if friend.friend.iduser == user.iduser:
+                    PostFriends = Post.objects.filter(user = friend.user)
+                else:
+                    PostFriends = Post.objects.filter(user = friend.friend)
+                values = PostFriends.values()
+            jsonFriendPublications = json.dumps(list(values), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonFriendPublications)}
         except:
             datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : {}}
         return JsonResponse(datos, safe=False)
@@ -588,8 +671,61 @@ class getPublicationComents(View):
             post = request.GET.get('idpublication')
             post = Post.objects.get(idpost=post)
             coments = Coments.objects.filter(post=post)
-            jsonComents = json.dumps(list(coments.values()), sort_keys=True , default= str)
+            values = coments.values()
+            for value in values:
+                receiver = value['user_id']
+                user = User.objects.filter(iduser=receiver)
+                receiver = user.values()
+                del value['user_id']
+                for rec in receiver:
+                    del rec['password']
+                    del rec['created_at']
+                    carrera = carrear.objects.filter(idcarrera=rec['typeCarrear_id'])
+                    rec['carrera'] = carrera.values()[0]['nombre']
+                    del rec['typeCarrear_id']
+                value['usuario creador'] = receiver[0]
+            jsonComents = json.dumps(list(values), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de comentarios" , "data" : json.loads(jsonComents)}
         except:
             datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : {}}
         return JsonResponse(datos, safe=False)
+    def post(self, request):
+        try: 
+            post = request.POST.get('idpost')
+            post = Post.objects.get(idpost=post)
+            coments = Coments.objects.filter(post=post)
+            values = coments.values()
+            for value in values:
+                receiver = value['user_id']
+                user = User.objects.filter(iduser=receiver)
+                receiver = user.values()
+                del value['user_id']
+                for rec in receiver:
+                    del rec['password']
+                    del rec['created_at']
+                    carrera = carrear.objects.filter(idcarrera=rec['typeCarrear_id'])
+                    rec['carrera'] = carrera.values()[0]['nombre']
+                    del rec['typeCarrear_id']
+                value['usuario creador'] = receiver[0]
+            jsonComents = json.dumps(list(values), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de comentarios" , "data" : json.loads(jsonComents)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+
+class getLikes(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def get(self, request):
+        try:
+            post = request.GET.get('idpublication')
+            post = Post.objects.get(idpost=post)
+            likes = Like.objects.filter(post=post)
+            jsonLikes = json.dumps(list(likes.values()), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de likes" , "data" : json.loads(jsonLikes)}
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+        
