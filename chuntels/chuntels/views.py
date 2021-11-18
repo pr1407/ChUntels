@@ -231,12 +231,13 @@ def perfilUser(request,nickname):
         }
     )
 
+# Servicios 
+
 class UserView(View):
     def get(self, request):
         userlist = User.objects.all()
         return JsonResponse(list(userlist.values()), safe=False)
-    
-# Busqueda Usuario    
+ 
 class UserViewId(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -400,7 +401,7 @@ class sendPublication(View):
             return JsonResponse(datos, safe=False)
         
         if _typePost == None or _typePost == '':
-            _typePost = typePost.objects.get(idtypePost=1)
+            _typePost = typePost.objects.get(idtypePost=2)
         else:
             _typePost = typePost.objects.get(idtypePost=_typePost)
 
@@ -428,6 +429,141 @@ class sendPublication(View):
 
         return JsonResponse(datos, safe=False)
 
+class sendWork(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+
+    def post(self, request):
+
+        user = request.POST.get('user')
+        nameWork = request.POST.get('name')
+        workcontent = request.POST.get('contenido')
+        photo = request.POST.get('photo')
+        files = request.POST.get('files')
+        _typePost = request.POST.get('typePost')
+
+        if user == None or user == '':
+            datos = {"valor":False,"mensaje": "No se encontró usuario" , "data" : {}}
+            return JsonResponse(datos, safe=False)
+
+        if workcontent == None or workcontent == '':
+            datos = {"valor":False,"mensaje": "Debes ingresar al menos 1 caracter o archivo" , "data" : {}}
+            return JsonResponse(datos, safe=False)
+        
+        if _typePost == None or _typePost == '':
+            _typePost = typePost.objects.get(idtypePost=1)
+        else:
+            _typePost = typePost.objects.get(idtypePost=_typePost)
+
+        try :
+            user = User.objects.get(iduser=user)
+            send_work = Work(
+                name = nameWork,
+                description = workcontent,
+                created_at = today,
+                user = user,
+                typePost = _typePost
+            )
+
+            if photo != None or photo != '':
+                send_work.photo = photo
+
+            if photo != None or photo != '':
+                send_work.files = files
+            
+            send_work.save()
+
+            datos = {"valor":True,"mensaje": "Trabajo creado" , "data" : {}}
+
+        except ValueError:
+            datos = {"valor":False,"mensaje": "No se pudo crear el trabajo" , "data" : {}}
+
+        return JsonResponse(datos, safe=False)
+
+class sendCocreators(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        cocreator = User.objects.get(iduser=request.POST.get('cocreator'))
+        work = Work.objects.get(idwork=request.POST.get('work'))
+        listCocreators = work.cocreators.filter(iduser=cocreator.iduser)
+        creatorWork = User.objects.get(iduser=work.user.iduser)
+        try:
+            listavacia= list(listCocreators)
+            if cocreator != creatorWork:
+                print(listavacia)
+                if listavacia:                
+                    work.cocreators.remove(cocreator)
+                    work.save()
+                    datos = {"valor":False,"mensaje": "Quitando colaborador" , "data" : {}}
+                else:
+                    work.cocreators.add(cocreator)
+                    work.save()
+                    datos = {"valor":False,"mensaje": "Agregando colaborador" , "data" : {}}
+            else:
+                datos = {"valor":False,"mensaje": "No puedes agregarte a ti mismo" , "data" : {}}
+        except:
+            datos = {"valor":False,"mensaje": "No se pudo agregar al colaborador" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+class getWorks(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        user = User.objects.get(iduser=request.POST.get('user'))
+        works = Work.objects.filter(user=user)
+        try:      
+            jsonWorksUser = json.dumps(list(works.values()), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de trabajos" , "data" :{ "Trabajos" : json.loads(jsonWorksUser)} }
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+class getColaboratorsWorks(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        work = Work.objects.get(idwork=request.POST.get('idwork'))
+        userLikes = work.cocreators.all()
+        values = userLikes.values()
+        try:      
+            for value in values:
+                del value['iduser']
+                del value['password']
+                del value['created_at']
+            jsonListCoworks = json.dumps(list(values), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de trabajos" , "data" :{"colaboladores":json.loads(jsonListCoworks) , "cantidad" : work.cocreators.count()} }
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)  
+
+class doLikeWork(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        user = User.objects.get(iduser=request.POST.get('user'))
+        work = Work.objects.get(idpost=request.POST.get('idpublication'))
+        userDoLike = work.likes.filter(iduser=user.iduser)
+        try:
+            listavacia= list(userDoLike)
+            print(listavacia)
+            if listavacia:                
+                work.likes.remove(user)
+                work.save()
+                datos = {"valor":False,"mensaje": "Quitando like a esta publicacion" , "data" : {}}
+            else:
+                work.likes.add(user)
+                work.save()
+                datos = {"valor":False,"mensaje": "Dando like a esta publicacion" , "data" : {}}
+        except:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+    
 class getPublication(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -449,7 +585,6 @@ class getPublication(View):
     def post(self, request):
         try:
             user = User.objects.get(iduser=request.POST.get('user'))
-            """user = User.objects.get(nickname=user)"""
             post = Post.objects.filter(user=user)
             jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
 
@@ -713,19 +848,140 @@ class getPublicationComents(View):
             datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : {}}
         return JsonResponse(datos, safe=False)
 
+class doLikePost(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        user = User.objects.get(iduser=request.POST.get('user'))
+        post = Post.objects.get(idpost=request.POST.get('idpublication'))
+        userDoLike = post.likes.filter(iduser=user.iduser)
+        try:
+            listavacia= list(userDoLike)
+            print(listavacia)
+            if listavacia:                
+                post.likes.remove(user)
+                post.save()
+                datos = {"valor":False,"mensaje": "Quitando like a esta publicacion" , "data" : {}}
+            else:
+                post.likes.add(user)
+                post.save()
+                datos = {"valor":False,"mensaje": "Dando like a esta publicacion" , "data" : {}}
+        except:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
+        return JsonResponse(datos, safe=False)
 
-class getLikes(View):
+class getLikesPost(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def get(self, request):
-        try:
-            post = request.GET.get('idpublication')
-            post = Post.objects.get(idpost=post)
-            likes = Like.objects.filter(post=post)
-            jsonLikes = json.dumps(list(likes.values()), sort_keys=True , default= str)
-            datos = {"valor":True,"mensaje": "Lista de likes" , "data" : json.loads(jsonLikes)}
+        post = Post.objects.get(idpost = request.GET.get('idpublication'))
+        userLikes = post.likes.all()
+        values = userLikes.values()
+        try:      
+            for value in values:
+                del value['iduser']
+                del value['password']
+                del value['created_at']
+            jsonLikesPost = json.dumps(list(values), sort_keys=True , default= str)
+            
+            datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesPost) , "cantidad" : post.likes.count()} }
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+    def post(self, request):
+        post = Post.objects.get(idpost=request.POST.get('idpublication'))
+        userLikes = post.likes.all()
+        values = userLikes.values()
+        try:      
+            for value in values:
+                del value['iduser']
+                del value['password']
+                del value['created_at']
+            jsonLikesPost = json.dumps(list(values), sort_keys=True , default= str)
+            
+            datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesPost) , "cantidad" : post.likes.count()} }
         except:
             datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
         return JsonResponse(datos, safe=False)
         
+class getLikesWorks(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        work = Work.objects.get(idwork = request.GET.get('idwork'))
+        userLikes = work.likes.all()
+        values = userLikes.values()
+        try:      
+            for value in values:
+                del value['iduser']
+                del value['password']
+                del value['created_at']
+            jsonLikesWorks = json.dumps(list(values), sort_keys=True , default= str)
+            
+            datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesWorks) , "cantidad" : work.likes.count()} }
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+    def post(self, request):
+        work = Work.objects.get(idwork=request.POST.get('idwork'))
+        userLikes = work.likes.all()
+        values = userLikes.values()
+        try:      
+            for value in values:
+                del value['iduser']
+                del value['password']
+                del value['created_at']
+            jsonLikesWorks = json.dumps(list(values), sort_keys=True , default= str)
+            
+            datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesWorks) , "cantidad" : work.likes.count()} }
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+class doLikeComents(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        user = User.objects.get(iduser=request.POST.get('user'))
+        coment = Coments.objects.get(idpost=request.POST.get('idpublication'))
+        userDoLike = coment.likes.filter(iduser=user.iduser)
+        try:
+            listavacia= list(userDoLike)
+            print(listavacia)
+            if listavacia:                
+                coment.likes.remove(user)
+                coment.save()
+                datos = {"valor":False,"mensaje": "Quitando like a este comentario" , "data" : {}}
+            else:
+                coment.likes.add(user)
+                coment.save()
+                datos = {"valor":False,"mensaje": "Dando like a este comentario" , "data" : {}}
+        except:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+
+class getLikeComents(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        coment = Coments.objects.get(idcoment=request.POST.get('coment'))
+        userLikes = coment.likes.all()
+        values = userLikes.values()
+        try:      
+            for value in values:
+                del value['iduser']
+                del value['password']
+                del value['created_at']
+            jsonLikesComents = json.dumps(list(values), sort_keys=True , default= str)
+            
+            datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesComents) , "cantidad" : coment.likes.count()} }
+        except:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)

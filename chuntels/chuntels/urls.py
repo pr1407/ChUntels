@@ -17,11 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from chuntels.views import login,home,feed,publication,service, register, changeData , logout , \
-UserView ,UserViewName, UserViewNickName , perfilUser, chat,beFriends,sendPublication, getPublication , getNotification , getFriends , \
-getFriendPublications , comentPublication , getPublicationComents
+from chuntels.views import *
 urlpatterns = [
-
     path('admin/', admin.site.urls),
     path('login/', login),
     path('register/', register),
@@ -42,10 +39,19 @@ urlpatterns = [
     path('api/get-notifications/', getNotification.as_view()),
     path('api/get-friends/', getFriends.as_view() , name= 'userDetail'),
     path('api/get-friends/<str:nickname>/', getFriends.as_view() , name= 'userDetail'),
-    
     path('api/get-friends-publications/', getFriendPublications.as_view()),
     path('api/coment-publication/', comentPublication.as_view()),
     path('api/get-publication-coments/', getPublicationComents.as_view()),
+    path('api/send-likes-post/', doLikePost.as_view()),
+    path('api/get-likes-post/', getLikesPost.as_view()),
+    path('api/get-likes-works/', getLikesWorks.as_view()),
+    path('api/send-work/', sendWork.as_view()),
+    path('api/send-cocreators-work/', sendCocreators.as_view()),
+    path('api/get-works/', getWorks.as_view()),
+    path('api/get-colaborators-works/', getColaboratorsWorks.as_view()),
+    path('api/send-likes-works/', doLikeWork.as_view()),
+    path('api/send-likes-coments/', doLikeComents.as_view()),
+    path('api/get-likes-coments/', getLikeComents.as_view()),
+
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
