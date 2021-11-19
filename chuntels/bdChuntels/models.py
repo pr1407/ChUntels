@@ -85,6 +85,18 @@ class Coments(models.Model):
     def num_likes(self):
         return self.likes.count()
 
+class ComentsWorks(models.Model):
+    idcoment = models.AutoField(primary_key=True)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, related_name='comentsWorks')
+    likes = models.ManyToManyField(User, related_name='likesComentsWorks', blank=True)
+    photo = models.ImageField(upload_to='photos/', null=True, blank=True)
+    files = models.FileField(upload_to='files/', null=True, blank=True)
+    def num_likes(self):
+        return self.likes.count()
+
 class Friend(models.Model):
     idfriend = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE , related_name='personUser')

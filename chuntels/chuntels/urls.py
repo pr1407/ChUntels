@@ -52,6 +52,9 @@ urlpatterns = [
     path('api/get-likes-work/', getLikesWorks.as_view()),
     path('api/send-likes-coment/', doLikeComents.as_view()),
     path('api/get-likes-coment/', getLikeComents.as_view()),
-
+    path('api/send-coments-work/', comentWorks.as_view()),
+    path('api/get-coments-work/', getWorksComents.as_view()),
+    path('api/send-likes-comentsworks/', doLikeComentsWorks.as_view()),
+    path('api/get-likes-comentsworks/', getLikeComentsWorks.as_view()),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
