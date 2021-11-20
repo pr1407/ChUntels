@@ -1,0 +1,3 @@
+
+
+moment.locale('es')

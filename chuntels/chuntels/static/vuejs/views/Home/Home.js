@@ -9,21 +9,6 @@ const home = new Vue({
         file: ''
     },
     methods: {
-        async responce() {
-
-            const result = await axios.get('/api/saludo/');
-
-            if (result.status === 200) {
-                let responseData = result.data
-
-                if (responseData.valor) {
-                    console.log(responseData.data)
-                } else {
-                    console.log(responseData.msn)
-                }
-            }
-
-        },
         async sendPublish(iduser) {
             try {
                 let formData = new FormData();
@@ -63,15 +48,6 @@ const home = new Vue({
             }
 
             $('#publicarmodal').modal('hide')
-            /*this.publicationlist.unshift({
-                id: this.publicationlist.length + 1,
-                user: 'Juan',
-                publication: this.publish,
-                date: 'hace un momento',
-                likes:'0',
-                comments:'0',
-                shareds:'0'
-            })*/
             this.publish = ''
 
         },
@@ -82,6 +58,13 @@ const home = new Vue({
                     let responseData = result.data
                     if (responseData.valor) {
                         this.publicationlist = responseData.data
+                        for(let key in this.publicationlist) {
+                            moment.locale('es')
+                            let fecha = moment(this.publicationlist[key].created_at)
+                            moment.locale('es')
+                            this.publicationlist[key].created_at = fecha.fromNow();
+
+                        }
                     } else {
                         console.log(responseData.mensaje)
                         Swal.fire({
@@ -99,15 +82,6 @@ const home = new Vue({
                     text: 'Recargue y vuelva a intentarlo'
                 })
             }
-            /*this.publicationlist.push({
-                id: 1,
-                user: 'Juan',
-                publication: 'Hola mundo',
-                date: 'hace 2 horas',
-                likes:'2',
-                comments:'1',
-                shareds:'0'
-            })*/
         },
         async sendLike(index) {
             if (!$('#btn-like').hasClass('active')) {

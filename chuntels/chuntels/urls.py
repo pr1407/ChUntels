@@ -19,6 +19,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from chuntels.views import *
 urlpatterns = [
+    path('', redirectLogin),
+
+    #WEB PHAT'S
     path('admin/', admin.site.urls),
     path('login/', login),
     path('register/', register),
@@ -31,6 +34,8 @@ urlpatterns = [
     path('logout/', logout),
     path('user/', UserView.as_view() , name= 'userList'),
     path('user/<str:nickname>/', perfilUser, name= 'userDetail'),
+
+    #API REST PHAT'S
     path('api/search-person/', UserViewName.as_view() , name= 'userDetail'),
     path('api/send-friend-request/', beFriends.as_view()),
     path('api/send-publication/', sendPublication.as_view()),

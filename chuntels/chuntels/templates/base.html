@@ -30,6 +30,10 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="{% static '/app.js' %}"></script>
+
     {% block js %} {% endblock %}
     {% if request.path != '/login/' and request.path != '/register/' %}
     <script src="{% static '/vuejs/views/NavBar/NavBar.js' %}"></script>

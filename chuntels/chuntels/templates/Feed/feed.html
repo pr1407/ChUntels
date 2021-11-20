@@ -14,7 +14,7 @@
         <div class="col-lg-4 col-md-5 col-12 d-md-block d-none">
             <div class="card">
                 <div class="card-body">
-                    
+
                 </div>
             </div>
         </div>
@@ -25,38 +25,41 @@
                     <div class="d-flex align-items-center my-3">
                         <a href="/home/">
                             {% if user.photo %}
-                            <img src="{{user.photo.url}}"
-                            class="avatar rounded-circle">
+                            <img src="{{user.photo.url}}" class="avatar rounded-circle">
                             {% else %}
                             <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                            class="avatar rounded-circle">
+                                class="avatar rounded-circle">
                             {% endif %}
                         </a>
                         <div class="mx-3 w-100">
-                            <a class="form-control form-control-muted"  data-toggle="modal"
-                            data-target="#publicarmodal">¿Qué quieres publicar?</a>
+                            <a class="form-control form-control-muted" data-toggle="modal"
+                                data-target="#publicarmodal">¿Qué quieres publicar?</a>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="card">
+            <div class="card" v-if="publicationlist.length===0">
+                <div class="card-body text-center">
+                    <p class="text-muted text-sm lh-160 mb-0"><i class="fas fa-info-circle"></i> No hay nada que
+                        mostrar</p>
+                </div>
+            </div>
+            <div class="card" v-for="(item,index) in publicationlist">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <a href="#">
-                            <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
+                            <img v-if="item.user.photo" :src="'/media/'+item.user.photo"
+                                class="avatar">
+                            <img v-else src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
                                 class="avatar">
                         </a>
                         <div class="mx-3">
-                            <a href="#" class="text-dark font-weight-600 text-sm">John Snow</a>
-                            <small class="d-block text-muted">3 days ago</small>
+                            <a href="#" class="text-dark font-weight-600 text-sm">[[item.user.name]]</a>
+                            <small class="d-block text-muted">[[item.created_at]]</small>
                         </div>
                     </div>
                     <div class="pt-3">
-                        <p class="text-sm lh-160 mb-0">Cras sit amet nibh libero nulla vel metus scelerisque
-                            ante
-                            sollicitudin. Cras purus odio
-                            vestibulum in vulputate viverra turpis.</p>
+                        <p class="text-sm lh-160 mb-0">[[item.content]]</p>
                     </div>
                     <div class="pt-3">
                         <div class="icon-actions">
@@ -79,15 +82,15 @@
                     <div class="d-flex align-items-center my-3">
                         <a href="/home/">
                             {% if user.photo %}
-                            <img src="{{user.photo.url}}"
-                            class="avatar rounded-circle">
+                            <img src="{{user.photo.url}}" class="avatar rounded-circle">
                             {% else %}
                             <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                            class="avatar rounded-circle">
+                                class="avatar rounded-circle">
                             {% endif %}
                         </a>
                         <div class="mx-3 w-100">
-                            <input class="form-control form-control-muted" type="text" placeholder="Escribe un comentario...">
+                            <input class="form-control form-control-muted" type="text"
+                                placeholder="Escribe un comentario...">
                         </div>
                     </div>
                 </div>

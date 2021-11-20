@@ -21,7 +21,7 @@ const navbar = new Vue({
                   buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
-                    title: '¿Estás seguro de aceptar la solicitud de ' + notification.receiver_id + '?',
+                    title: '¿Estás seguro de aceptar la solicitud de ' + notification.receiver.name + '?',
                     text: "",
                     icon: 'question',
                     showCancelButton: true,
@@ -68,6 +68,13 @@ const navbar = new Vue({
                 let responseData = response.data;
                 if (responseData.valor) {
                     this.notifications = responseData.data
+
+                    for (let key in this.notifications) {
+                        moment.locale('es')
+                        let fechanoti = moment(this.notifications[key].created_at)
+                        
+                        this.notifications[key].created_at = fechanoti.fromNow();
+                    }
                 }
             }
             catch (err) {
