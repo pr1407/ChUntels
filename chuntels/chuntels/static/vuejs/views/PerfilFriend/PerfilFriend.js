@@ -4,7 +4,14 @@ const perfilFriend = new Vue({
   data: {
     saludo: 'Hola Mundo!',
     publicationlist: [],
-    statusFriendRequest: 0,
+    isFriendRequest:false,
+    btntextstatus:''
+  },
+  props: {
+    statusFriendRequest: {
+      type: Number,
+      default: 0,
+    },
   },
   methods: {
     async getPublications() {
@@ -19,6 +26,13 @@ const perfilFriend = new Vue({
 
         if (response.data.valor) {
           this.publicationlist = response.data.data;
+          for(let key in this.publicationlist) {
+            moment.locale('es')
+            let fecha = moment(this.publicationlist[key].created_at)
+            moment.locale('es')
+            this.publicationlist[key].created_at = fecha.fromNow();
+
+        }
         }
 
       } catch (err) {
@@ -26,11 +40,11 @@ const perfilFriend = new Vue({
       }
 
     },
-    async friendRequest(name, idfriend, iduser) {
-      console.log(idfriend, 'idfriend')
-      console.log(iduser, 'iduser')
-
-      if (this.statusFriendRequest === 0) {
+    async friendRequest(name, idfriend, iduser, status) {
+      
+      this.statusFriendRequest = status;
+      
+      if (this.statusFriendRequest === '0') {
         const swalWithBootstrapButtons = Swal.mixin({
           customClass: {
             confirmButton: 'btn btn-success',
@@ -59,6 +73,8 @@ const perfilFriend = new Vue({
             let response = await axios.post('/api/send-friend-request/', formData);
 
             if (response.data.valor) {
+              this.isFriendRequest = true
+              this.btntextstatus = 'Cancelar Solicitud'
               swalWithBootstrapButtons.fire(
                 'Solicitud enviada!',
                 'Se te notificará cuando tu solicitud de amistad sea contestada.',
@@ -73,7 +89,7 @@ const perfilFriend = new Vue({
             }
           }
         })
-      } else if (this.statusFriendRequest === 1) {
+      } else if (this.statusFriendRequest === '1') {
         const swalWithBootstrapButtons = Swal.mixin({
           customClass: {
             confirmButton: 'btn btn-success',
@@ -92,7 +108,7 @@ const perfilFriend = new Vue({
           reverseButtons: true
         }).then(async (result) => {
           if (result.isConfirmed) {
-            this.statusFriendRequest = 0;
+            this.statusFriendRequest = '0';
 
             let formData = new FormData();
             formData.append('user', iduser);
@@ -102,6 +118,8 @@ const perfilFriend = new Vue({
             let response = await axios.post('/api/send-friend-request/', formData);
 
             if (response.data.valor) {
+              this.isFriendRequest = true
+              this.btntextstatus = 'Enviar solicitud de amistad'
               swalWithBootstrapButtons.fire(
                 'Solicitud cancelada!',
                 '',
@@ -135,7 +153,7 @@ const perfilFriend = new Vue({
           reverseButtons: true
         }).then(async (result) => {
           if (result.isConfirmed) {
-            this.statusFriendRequest = 3;
+            this.statusFriendRequest = '3';
 
             let formData = new FormData();
             formData.append('user', iduser);
@@ -145,6 +163,8 @@ const perfilFriend = new Vue({
             let response = await axios.post('/api/send-friend-request/', formData);
 
             if (response.data.valor) {
+              this.isFriendRequest = true
+              this.btntextstatus = 'Dejar de ser amigos'
               swalWithBootstrapButtons.fire(
                 'Dejaste de ser amigo de ' + name + '!',
                 '',
@@ -160,6 +180,52 @@ const perfilFriend = new Vue({
           }
         })
       }
+    },
+    async aceptFriendRequest(name, idfriend, iduser, status) {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+      })
+
+      swalWithBootstrapButtons.fire({
+        title: '¿Estás seguro de aceptar la solicitud de ' + name + '?',
+        text: "",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No',
+        reverseButtons: true
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+
+          let formData = new FormData();
+          formData.append('user', iduser);
+          formData.append('friend', idfriend);
+          formData.append('state', '2');
+
+          let response = await axios.post('/api/send-friend-request/', formData);
+
+          if (response.data.valor) {
+            this.isFriendRequest = true
+            this.statusFriendRequest = '2';
+            this.btntextstatus = 'Dejar de ser amigos'
+            swalWithBootstrapButtons.fire(
+              'Tú y ' + name + ' ahora son amigos!',
+              '',
+              'success'
+            )
+          } else {
+            swalWithBootstrapButtons.fire(
+              'Ocurrio un error',
+              response.data.mensaje,
+              'error'
+            )
+          }
+        }
+      })
     }
   },
   mounted() {

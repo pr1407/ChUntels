@@ -17,9 +17,15 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.views import View
 from django.http import JsonResponse
 from bdChuntels.models import *
+import timeago
 
 today = datetime.date.today()
 
+<<<<<<< HEAD
+=======
+def redirectLogin(request):
+    return redirect('/login')
+>>>>>>> 86e310e759225432edeac1e63d2f601545c7edaf
 
 def register(request):
 
@@ -73,6 +79,8 @@ def login(request):
             except User.DoesNotExist:
                 #return redirect('/login')
                 print("error")
+        else:
+            return redirect('/login')
             
 
 
@@ -183,6 +191,14 @@ def publication(request,id):
     if 'user' in request.session:
 
         user = User.objects.get(iduser = request.session['user'])
+        post = Post.objects.get(idpost = id)
+
+        now = datetime.datetime.now()
+
+        fecha = timeago.format(datetime.datetime.date(post.created_at),now)
+
+        post.created_at = fecha
+
         resta = today.year - user.age.year
         return render(
             request,
@@ -190,6 +206,7 @@ def publication(request,id):
             {
                 "user" : user,  
                 "resta" : resta,
+                "data" : post,
                 "tittle": "Pagina Principal",
             }
         )
@@ -221,6 +238,24 @@ def perfilUser(request,nickname):
     userProfile = User.objects.get(nickname=nickname)
     resta = today.year - userProfile.age.year
 
+    relationstate = '0'
+    reseiver = userProfile
+
+    try:
+        relation = Friend.objects.get(user=userSesion, friend=userProfile)
+        relationstate = relation.state
+        reseiver = userProfile
+    except Friend.DoesNotExist:
+        relation = None
+        
+    if relationstate == '0':
+        try:
+            relation = Friend.objects.get(user=userProfile, friend=userSesion)
+            relationstate = relation.state
+            reseiver = userSesion
+        except Friend.DoesNotExist:
+            relation = None
+
     return render(
         request,
         'PerfilFriend/PerfilFriend.html',
@@ -229,6 +264,8 @@ def perfilUser(request,nickname):
             "userProfile" : userProfile,
             "edad": resta,
             "tittle": userProfile.nickname,
+            "relation": relationstate,
+            "reseiver": reseiver
         }
     )
 
@@ -573,7 +610,7 @@ class getPublication(View):
     def get(self, request):
         try:
             nickname = User.objects.get(iduser=request.session['user']).nickname
-            print("USUARIO: "+str(nickname))
+            
             user = User.objects.get(nickname=nickname)
             post = Post.objects.filter(user=user)
             jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
@@ -585,7 +622,7 @@ class getPublication(View):
         return JsonResponse(datos, safe=False)
     def post(self, request):
         try:
-            user = User.objects.get(iduser=request.POST.get('user'))
+            user = User.objects.get(nickname=request.POST.get('user'))
             post = Post.objects.filter(user=user)
             jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
 
@@ -745,8 +782,19 @@ class getFriendPublications(View):
         try:
             user = User.objects.get(iduser=request.session['user'])
             friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
-            PostFriends = Post.objects.filter(friend = friends)
-            values = PostFriends.values()
+            for friend in friends:
+                if friend.friend.iduser == user.iduser:
+                    PostFriends = Post.objects.filter(user = friend.user)
+                else:
+                    PostFriends = Post.objects.filter(user = friend.friend)
+                values = PostFriends.values()
+                for value in values:
+                    publiuser = User.objects.filter(iduser=value['user_id'])
+                    publiuser = publiuser.values()[0]
+                    del publiuser['password']
+                    del publiuser['iduser']
+                    value['user'] = publiuser
+                    del value['user_id']
             jsonFriendPublications = json.dumps(list(values), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonFriendPublications)}
         except:
@@ -842,7 +890,7 @@ class getPublicationComents(View):
                     carrera = carrear.objects.filter(idcarrera=rec['typeCarrear_id'])
                     rec['carrera'] = carrera.values()[0]['nombre']
                     del rec['typeCarrear_id']
-                value['usuario creador'] = receiver[0]
+                value['usuario_creador'] = receiver[0]
             jsonComents = json.dumps(list(values), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de comentarios" , "data" : json.loads(jsonComents)}
         except:

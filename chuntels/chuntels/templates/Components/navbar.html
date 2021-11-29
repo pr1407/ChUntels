@@ -57,17 +57,20 @@
                                 <div class="row align-items-center">
                                     <div class="col-auto">
                                         <!-- Avatar -->
-                                        <img alt="Image placeholder"
+                                        <img v-if="item.receiver.photo" alt="Image placeholder"
+                                            :src="'/media/'+item.receiver.photo"
+                                            class="avatar rounded-circle">
+                                        <img v-else alt="Image placeholder"
                                             src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
                                             class="avatar rounded-circle">
                                     </div>
                                     <div class="col ml--2">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
-                                                <h4 class="mb-0 text-sm">[[item.receiver_id]]</h4>
+                                                <h4 class="mb-0 text-sm">[[item.receiver.name]]</h4>
                                             </div>
                                             <div class="text-right text-muted">
-                                                <small>hace 2h</small>
+                                                <small>[[item.created_at]]</small>
                                             </div>
                                         </div>
                                         <p class="text-sm mb-0">[[item.content]]</p>

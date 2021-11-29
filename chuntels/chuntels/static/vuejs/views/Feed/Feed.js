@@ -7,51 +7,72 @@ const feed = new Vue({
         publicationlist: [],
     },
     methods: {
-        async sendPublish(){
-            /*const result = await axios.post('/api/publish/',{
-                publish: this.publish
-            });
-            if(result.status === 200){
-                let responseData = result.data
-                if(responseData.valor){
-                    console.log(responseData.data)
-                }else{
-                    console.log(responseData.msn)
+        async sendPublish(iduser) {
+            try {
+                let formData = new FormData();
+
+                formData.append('publication', this.publish);
+                formData.append('user', iduser);
+                formData.append('photo', this.photo);
+                formData.append('files', this.file);
+                formData.append('typePost', 1);
+
+                const result = await axios.post('/api/send-publication/', formData);
+                if (result.status === 200) {
+                    let responseData = result.data
+                    if (responseData.valor) {
+                        //console.log(responseData.data)
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Publicación enviada',
+                            text: responseData.mensaje
+                        })
+                        await this.getPublications()
+                    } else {
+                        //console.log(responseData.msn)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ocurrio un error',
+                            text: responseData.mensaje
+                        })
+                    }
                 }
-            }*/
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ocurrio un error',
+                    text: 'Recargue y vuelva a intentarlo'
+                })
+            }
 
             $('#publicarmodal').modal('hide')
-            this.publicationlist.unshift({
-                id: this.publicationlist.length + 1,
-                user: 'Juan',
-                publication: this.publish,
-                date: 'hace un momento',
-                likes:'0',
-                comments:'0',
-                shareds:'0'
-            })
             this.publish = ''
 
         },
-        async getPublications(){
-            /*const result = await axios.get('/api/publications/');
-            if(result.status === 200){
-                let responseData = result.data
-                if(responseData.valor){
-                    this.publicationlist = responseData.data
-                }else{
-                    console.log(responseData.msn)
+        async getPublications() {
+            try {
+                const result = await axios.get('/api/get-friends-publications/');
+                if (result.status === 200) {
+                    let responseData = result.data
+                    if (responseData.valor) {
+                        this.publicationlist = responseData.data
+                        for(let key in this.publicationlist) {
+                            moment.locale('es')
+                            let fecha = moment(this.publicationlist[key].created_at)
+                            moment.locale('es')
+                            this.publicationlist[key].created_at = fecha.fromNow();
+
+                        }
+                    } 
                 }
-            }*/
-            /*this.publicationlist.push({
-                id: 1,
-                user: 'Juan',
-                publication: 'Hola mundo',
-                date: 'hace 2 horas',
-                likes:'2',
-                comments:'1',
-                shareds:'0'
-            })*/
+            }catch(err){
+                console.log(err)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ocurrio un error',
+                    text: 'Recargue y vuelva a intentarlo'
+                })
+            }
         },
     },
     mounted(){
