@@ -20,6 +20,7 @@ from bdChuntels.models import *
 
 today = datetime.date.today()
 
+
 def register(request):
 
     if request.method == 'POST':

@@ -24,7 +24,6 @@ urlpatterns = [
     path('register/', register),
     path('home/', home),
     path('feed/', feed),
-    path('chat/', chat),
     path('publication/<int:id>/', publication),
     path('api/saludo/', service),
     path('editdata/',changeData),
@@ -56,5 +55,5 @@ urlpatterns = [
     path('api/get-coments-work/', getWorksComents.as_view()),
     path('api/send-likes-comentsworks/', doLikeComentsWorks.as_view()),
     path('api/get-likes-comentsworks/', getLikeComentsWorks.as_view()),
-    
+    path('chat/',chat),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
