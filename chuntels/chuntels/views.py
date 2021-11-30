@@ -348,7 +348,7 @@ class beFriends(View):
     
 
     def post(self, request):
-        user = request.POST.get('user')
+        user =request.session['user']
         friend = request.POST.get('friend')
         state = request.POST.get('state')
         
@@ -439,7 +439,7 @@ class sendPublication(View):
 
     def post(self, request):
 
-        user = request.POST.get('user')
+        user =request.session['user']
         publication = request.POST.get('publication')
         photo = request.POST.get('photo')
         files = request.POST.get('files')
@@ -489,7 +489,7 @@ class sendWork(View):
 
     def post(self, request):
 
-        user = request.POST.get('user')
+        user =request.session['user']
         nameWork = request.POST.get('name')
         workcontent = request.POST.get('contenido')
         photo = request.POST.get('photo')
@@ -566,7 +566,7 @@ class getWorks(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         works = Work.objects.filter(user=user)
         try:      
             jsonWorksUser = json.dumps(list(works.values()), sort_keys=True , default= str)
@@ -599,7 +599,7 @@ class doLikeWork(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         work = Work.objects.get(idpost=request.POST.get('idpublication'))
         userDoLike = work.likes.filter(iduser=user.iduser)
         try:
@@ -917,7 +917,7 @@ class doLikePost(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         post = Post.objects.get(idpost=request.POST.get('idpublication'))
         userDoLike = post.likes.filter(iduser=user.iduser)
         try:
@@ -1012,7 +1012,7 @@ class doLikeComents(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         coment = Coments.objects.get(idcoment=request.POST.get('coment'))
         userDoLike = coment.likes.filter(iduser=user.iduser)
         try:
@@ -1056,7 +1056,7 @@ class comentWorks(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         work = request.POST.get('work')
         coment = request.POST.get('coment')
         photo = request.POST.get('photo')
@@ -1139,7 +1139,7 @@ class doLikeComentsWorks(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         coment = ComentsWorks.objects.get(idcoment=request.POST.get('coment'))
         print(coment)
         userDoLike = coment.likes.filter(iduser=user.iduser)
@@ -1186,7 +1186,7 @@ class sendMessange(View):
         return super().dispatch(request, *args, **kwargs)
     
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         receiver = User.objects.get(iduser=request.POST.get('user2'))
         buscadorChat = Chat.objects.filter(user=User.objects.get(iduser = user.iduser) , receiver=User.objects.get(iduser = receiver.iduser)) | Chat.objects.filter(user=User.objects.get(iduser = receiver.iduser) , receiver=User.objects.get(iduser = user.iduser)) 
         chat = Chat.objects.get(idchat=buscadorChat.first().idchat)
@@ -1224,7 +1224,7 @@ class getMessange(View):
     def dispatch(self, request, *args, **kwargs): 
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         receiver = User.objects.get(iduser=request.POST.get('user2'))
         buscadorChat = Chat.objects.filter(user=User.objects.get(iduser = user.iduser) , receiver=User.objects.get(iduser = receiver.iduser)) | Chat.objects.filter(user=User.objects.get(iduser = receiver.iduser) , receiver=User.objects.get(iduser = user.iduser)) 
         chat = Chat.objects.get(idchat=buscadorChat.first().idchat)        
