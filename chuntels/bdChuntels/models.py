@@ -103,9 +103,6 @@ class Friend(models.Model):
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friend')
     state = models.CharField(max_length=1 , default='0')
 
-class stateMessage(models.Model):
-    idstateMessage = models.AutoField(primary_key=True)
-    state =models.CharField(max_length=50)
 
 class Chat(models.Model):
     idchat = models.AutoField(primary_key=True)
@@ -117,8 +114,7 @@ class Message(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiverMessage')
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
     files = models.FileField(upload_to='files/', null=True, blank=True)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    state = models.ForeignKey(stateMessage, on_delete=models.CASCADE)
+    state = models.CharField(max_length=1 , default='1')

@@ -60,5 +60,7 @@ urlpatterns = [
     path('api/get-coments-work/', getWorksComents.as_view()),
     path('api/send-likes-comentsworks/', doLikeComentsWorks.as_view()),
     path('api/get-likes-comentsworks/', getLikeComentsWorks.as_view()),
+    path('api/sent-messages/', sendMessange.as_view()),
+    path('api/get-list-messages/', getMessange.as_view()),
     path('chat/',chat),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
