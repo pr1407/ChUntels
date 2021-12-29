@@ -57,7 +57,7 @@ const navbar = new Vue({
             }
         },
         async seeNotifications() {
-            console.log('tas clickeando')
+            
             if (this.notifications.length > 0) {
                 return;
             }

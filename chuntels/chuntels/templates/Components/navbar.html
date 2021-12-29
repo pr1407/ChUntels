@@ -20,7 +20,7 @@
                         <a class="dropdown-item" v-for="item in personasFiltradas" :href="'/user/' + item.nickname">
                             <img v-if="item.photo" :src="'/media/' + item.photo" class="avatar">
                             <img v-else
-                                src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
+                                src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
                                 class="avatar">
                             [[item.name]]
                         </a>
@@ -138,7 +138,7 @@
                             <img alt="Image placeholder" class="avatar avatar-sm rounded-circle"
                                 src="{{user.photo.url}}">
                             {% else %}
-                            <img src="https://demos.creative-tim.com/argon-dashboard-pro/assets/img/theme/team-1.jpg"
+                            <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
                                 class="avatar avatar-sm rounded-circle">
                             {% endif %}
                             <div class="media-body  ml-2  d-none d-lg-block">
@@ -169,7 +169,7 @@
                         <div class="dropdown-divider"></div>
                         <a href="/logout/" class="dropdown-item">
                             <i class="ni ni-user-run"></i>
-                            <span>Logout</span>
+                            <span>Cerrar Sesión</span>
                         </a>
                     </div>
                 </li>

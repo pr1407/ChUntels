@@ -120,5 +120,4 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiverMessage')
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
     files = models.FileField(upload_to='files/', null=True, blank=True)
-    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    state = models.ForeignKey(stateMessage, on_delete=models.CASCADE)
+    state = models.CharField(max_length=1, default='1', null=True, blank=True)

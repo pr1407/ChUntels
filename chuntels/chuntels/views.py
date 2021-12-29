@@ -26,6 +26,9 @@ def redirectLogin(request):
 
 def register(request):
 
+    if 'user' in request.session:
+        return redirect('/home')
+        
     if request.method == 'POST':
         formRegistro = RegisterForm(request.POST)
         if formRegistro.is_valid():
@@ -58,6 +61,9 @@ def register(request):
    
 def login(request):
 
+    if 'user' in request.session:
+        return redirect('/home')
+
     formLogin = LoginForm() 
 
     if request.method == 'POST':
@@ -69,6 +75,8 @@ def login(request):
             try:
                 usuario = User.objects.get(name = loginUsuario['username'])
                 if check_password(loginUsuario['password'], usuario.password):
+                    usuario.is_active = True
+                    usuario.save(update_fields=['is_active'])
                     request.session['user'] = usuario.iduser
                     return redirect('/home')
                 else:
@@ -126,6 +134,11 @@ def chat(request):
 
 def logout(request):
     if 'user' in request.session:
+        print(request.session['user'])
+        user = User.objects.get(iduser = request.session['user'])
+        user.is_active = False
+        user.save(update_fields=['is_active'])
+
         del request.session['user']
     return redirect('/login')
 
@@ -1158,4 +1171,59 @@ class getLikeComentsWorks(View):
             datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesComents) , "cantidad" : coment.likes.count()} }
         except:
             datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        return JsonResponse(datos, safe=False)
+
+class sendMessages(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        try:
+            user = User.objects.get(iduser=request.session['user'])
+            receiver = User.objects.get(iduser=request.POST.get('friend'))
+            message = request.POST.get('message')
+            today = datetime.datetime.now()
+            message = Message(
+                content = message,
+                created_at = today,
+                user = user,
+                receiver = receiver,
+                state = '1'
+            )
+            message.save()
+            datos = {"valor":True,"mensaje": "Mensaje enviado" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo enviar el mensaje" , "data" : {}}
+            return HttpResponse(e)
+        return JsonResponse(datos, safe=False)
+
+
+class getMessages(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        try:
+            now = datetime.datetime.now()
+
+            user = User.objects.get(iduser=request.session['user'])
+            friend = User.objects.get(iduser=request.POST.get('friend'))
+            messages = Message.objects.filter(receiver=user,user=friend,state='1').order_by('created_at') | Message.objects.filter(user=user,receiver=friend,state='1').order_by('created_at')
+            values = messages.values()
+            for value in values:
+                value['created_at'] = timeago.format(datetime.datetime.date(value['created_at']),now)
+
+                if value['user_id'] == request.session['user']:
+                    value['user_id'] = user.nickname
+                else:
+                    value['user_id'] = friend.nickname
+                
+                del value['idmessage']
+                del value['receiver_id']
+
+            jsonMessages = json.dumps(list(values), sort_keys=True , default= str)
+            datos = {"valor":True,"mensaje": "Lista de mensajes" , "data" : json.loads(jsonMessages)}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron mensajes" , "data" : {}}
+            return HttpResponse(e)
         return JsonResponse(datos, safe=False)

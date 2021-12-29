@@ -61,5 +61,7 @@ urlpatterns = [
     path('api/get-coments-work/', getWorksComents.as_view()),
     path('api/send-likes-comentsworks/', doLikeComentsWorks.as_view()),
     path('api/get-likes-comentsworks/', getLikeComentsWorks.as_view()),
+    path('api/send-message/', sendMessages.as_view()),
+    path('api/get-messages/', getMessages.as_view()),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
