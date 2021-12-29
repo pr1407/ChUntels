@@ -21,6 +21,7 @@ import timeago
 
 today = datetime.date.today()
 
+
 def redirectLogin(request):
     return redirect('/login')
 
@@ -328,8 +329,8 @@ class UserViewName(View):
             
             jsonUser = json.dumps(list(user.values()), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de personas" , "data" : json.loads(jsonUser)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : str(e)}
         #print(datos)
         ###datos = {"valor":True,"mensaje": "envio" , "datos" : request.POST.get('nombre')}
         return JsonResponse(datos, safe=False)
@@ -360,13 +361,13 @@ class beFriends(View):
     
 
     def post(self, request):
-        user = request.POST.get('user')
+        user =request.session['user']
         friend = request.POST.get('friend')
         state = request.POST.get('state')
         
         try:
             relacionInversa = Friend.objects.get(user=friend, friend=user)
-            datos = {"valor":False,"mensaje": "Ya esta amigos" , "data" : {}}
+            datos = {"valor":False,"mensaje": "Ya son amigos" , "data" : {}}
             relacionInversa.state = state
             if relacionInversa.state == '1':
                 datos = {"valor":True,"mensaje": "Recibiste una solicitud" , "data" : {}}
@@ -380,6 +381,15 @@ class beFriends(View):
                 noti.save()
             if relacionInversa.state == '2':
                 datos = {"valor":True,"mensaje": "Aceptaste la solicitud" , "data" : {}}
+                existeChat = Chat.objects.filter(user=User.objects.get(iduser = user) , receiver=User.objects.get(iduser = friend)) | Chat.objects.filter(user=User.objects.get(iduser = friend) , receiver=User.objects.get(iduser = user)) 
+                print(existeChat)
+                listavacia= list(existeChat)
+                if listavacia:                
+                    datos = {"valor":False,"mensaje": "El chat ya existe" , "data" : {}}
+                else:
+                    chat = chat = Chat.objects.create(user=User.objects.get(iduser = user) , receiver=User.objects.get(iduser = friend))
+                    chat.save()
+                    datos = {"valor":False,"mensaje": "Creando Chat" , "data" : {}}
             if relacionInversa.state == '3':
                 datos = {"valor":True,"mensaje": "Negaste la solicitud" , "data" : {}}
             relacionInversa.save()
@@ -420,6 +430,14 @@ class beFriends(View):
                 noti.save()
             if relacion.state == '2':
                 datos = {"valor":True,"mensaje": "Se ha aceptado la solicitud" , "data" : {}}
+                existeChat = Chat.objects.filter(user=User.objects.get(iduser = user) , receiver=User.objects.get(iduser = friend)) | Chat.objects.filter(user=User.objects.get(iduser = friend) , receiver=User.objects.get(iduser = user)) 
+                listavacia= list(existeChat)
+                if listavacia:                
+                    datos = {"valor":False,"mensaje": "El chat ya existe" , "data" : {}}
+                else:
+                    chat = chat = Chat.objects.create(user=User.objects.get(iduser = user) , receiver=User.objects.get(iduser = friend))
+                    chat.save()
+                    datos = {"valor":False,"mensaje": "Creando Chat" , "data" : {}}
             if relacion.state == '3':
                 datos = {"valor":True,"mensaje": "Se ha negado la solicitud" , "data" : {}}           
             
@@ -434,7 +452,7 @@ class sendPublication(View):
 
     def post(self, request):
 
-        user = request.POST.get('user')
+        user =request.session['user']
         publication = request.POST.get('publication')
         photo = request.POST.get('photo')
         files = request.POST.get('files')
@@ -472,8 +490,8 @@ class sendPublication(View):
 
             datos = {"valor":True,"mensaje": "Publicacion realizada" , "data" : {}}
 
-        except ValueError:
-            datos = {"valor":False,"mensaje": "No se pudo enviar la publicacion" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo enviar la publicacion" , "data" : str(e)}
 
         return JsonResponse(datos, safe=False)
 
@@ -484,7 +502,7 @@ class sendWork(View):
 
     def post(self, request):
 
-        user = request.POST.get('user')
+        user =request.session['user']
         nameWork = request.POST.get('name')
         workcontent = request.POST.get('contenido')
         photo = request.POST.get('photo')
@@ -524,8 +542,8 @@ class sendWork(View):
 
             datos = {"valor":True,"mensaje": "Trabajo creado" , "data" : {}}
 
-        except ValueError:
-            datos = {"valor":False,"mensaje": "No se pudo crear el trabajo" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo crear el trabajo" , "data" : str(e)}
 
         return JsonResponse(datos, safe=False)
 
@@ -552,8 +570,8 @@ class sendCocreators(View):
                     datos = {"valor":False,"mensaje": "Agregando colaborador" , "data" : {}}
             else:
                 datos = {"valor":False,"mensaje": "No puedes agregarte a ti mismo" , "data" : {}}
-        except:
-            datos = {"valor":False,"mensaje": "No se pudo agregar al colaborador" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo agregar al colaborador" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class getWorks(View):
@@ -561,13 +579,13 @@ class getWorks(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         works = Work.objects.filter(user=user)
         try:      
             jsonWorksUser = json.dumps(list(works.values()), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de trabajos" , "data" :{ "Trabajos" : json.loads(jsonWorksUser)} }
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : str(e) }
         return JsonResponse(datos, safe=False)
 
 class getColaboratorsWorks(View):
@@ -585,8 +603,8 @@ class getColaboratorsWorks(View):
                 del value['created_at']
             jsonListCoworks = json.dumps(list(values), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de trabajos" , "data" :{"colaboladores":json.loads(jsonListCoworks) , "cantidad" : work.cocreators.count()} }
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : str(e)}
         return JsonResponse(datos, safe=False)  
 
 class doLikeWork(View):
@@ -594,7 +612,7 @@ class doLikeWork(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         work = Work.objects.get(idpost=request.POST.get('idpublication'))
         userDoLike = work.likes.filter(iduser=user.iduser)
         try:
@@ -608,8 +626,8 @@ class doLikeWork(View):
                 work.likes.add(user)
                 work.save()
                 datos = {"valor":False,"mensaje": "Dando like a esta publicacion" , "data" : {}}
-        except:
-            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
     
 class getPublication(View):
@@ -637,8 +655,8 @@ class getPublication(View):
             jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de publicaciones" , "data" : json.loads(jsonPost)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class getNotification(View):
@@ -668,8 +686,8 @@ class getNotification(View):
             jsonNotification = json.dumps(list(values), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : str(e)}
 
         return JsonResponse(datos, safe=False)
     def post(self, request):
@@ -697,8 +715,8 @@ class getNotification(View):
             jsonNotification = json.dumps(list(values), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de notificaciones" , "data" : json.loads(jsonNotification)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : str(e)}
 
         return JsonResponse(datos, safe=False)
 
@@ -780,8 +798,8 @@ class getFriends(View):
             jsonFriends = json.dumps(list(values), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de amigos" , "data" : json.loads(jsonFriends)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class getFriendPublications(View):
@@ -822,8 +840,8 @@ class getFriendPublications(View):
                 values = PostFriends.values()
             jsonFriendPublications = json.dumps(list(values), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonFriendPublications)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class comentPublication(View):
@@ -852,8 +870,8 @@ class comentPublication(View):
 
             coment.save()
             datos = {"valor":True,"mensaje": "Comentario realizado" , "data" : {}}
-        except:
-            datos = {"valor":False,"mensaje": "No se pudo realizar el comentario" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el comentario" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class getPublicationComents(View):
@@ -903,8 +921,8 @@ class getPublicationComents(View):
                 value['usuario_creador'] = receiver[0]
             jsonComents = json.dumps(list(values), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de comentarios" , "data" : json.loads(jsonComents)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class doLikePost(View):
@@ -912,7 +930,7 @@ class doLikePost(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         post = Post.objects.get(idpost=request.POST.get('idpublication'))
         userDoLike = post.likes.filter(iduser=user.iduser)
         try:
@@ -926,8 +944,8 @@ class doLikePost(View):
                 post.likes.add(user)
                 post.save()
                 datos = {"valor":False,"mensaje": "Dando like a esta publicacion" , "data" : {}}
-        except:
-            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class getLikesPost(View):
@@ -961,8 +979,8 @@ class getLikesPost(View):
             jsonLikesPost = json.dumps(list(values), sort_keys=True , default= str)
             
             datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesPost) , "cantidad" : post.likes.count()} }
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
         
 class getLikesWorks(View):
@@ -997,8 +1015,8 @@ class getLikesWorks(View):
             jsonLikesWorks = json.dumps(list(values), sort_keys=True , default= str)
             
             datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesWorks) , "cantidad" : work.likes.count()} }
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 #Funciona
@@ -1007,7 +1025,7 @@ class doLikeComents(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         coment = Coments.objects.get(idcoment=request.POST.get('coment'))
         userDoLike = coment.likes.filter(iduser=user.iduser)
         try:
@@ -1021,8 +1039,8 @@ class doLikeComents(View):
                 coment.likes.add(user)
                 coment.save()
                 datos = {"valor":False,"mensaje": "Dando like a este comentario" , "data" : {}}
-        except:
-            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 #Funciona
@@ -1042,8 +1060,8 @@ class getLikeComents(View):
             jsonLikesComents = json.dumps(list(values), sort_keys=True , default= str)
             
             datos = {"valor":True,"mensaje": "Lista de likes" , "data" :{ "usuarios":json.loads(jsonLikesComents) , "cantidad" : coment.likes.count()} }
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron likes" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 #Funciona
 class comentWorks(View):
@@ -1051,7 +1069,7 @@ class comentWorks(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         work = request.POST.get('work')
         coment = request.POST.get('coment')
         photo = request.POST.get('photo')
@@ -1064,6 +1082,7 @@ class comentWorks(View):
                 user = user,
                 work = work
             )
+            
             if photo != None or photo != '':
                 coment.photo = photo
             
@@ -1072,8 +1091,8 @@ class comentWorks(View):
 
             coment.save()
             datos = {"valor":True,"mensaje": "Comentario al trabajo realizado" , "data" : {}}
-        except:
-            datos = {"valor":False,"mensaje": "No se pudo realizar el comentario al trabajo" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el comentario al trabajo" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 #Funciona
@@ -1123,8 +1142,8 @@ class getWorksComents(View):
                 value['usuario creador'] = receiver[0]
             jsonComents = json.dumps(list(values), sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de comentarios" , "data" : json.loads(jsonComents)}
-        except:
-            datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se encontraron comentarios" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 #Funciona
@@ -1133,13 +1152,12 @@ class doLikeComentsWorks(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def post(self, request):
-        user = User.objects.get(iduser=request.POST.get('user'))
+        user = User.objects.get(iduser=request.session['user'])
         coment = ComentsWorks.objects.get(idcoment=request.POST.get('coment'))
         print(coment)
         userDoLike = coment.likes.filter(iduser=user.iduser)
         try:
             listavacia= list(userDoLike)
-            print(listavacia)
             if listavacia:                
                 coment.likes.remove(user)
                 coment.save()
@@ -1148,8 +1166,8 @@ class doLikeComentsWorks(View):
                 coment.likes.add(user)
                 coment.save()
                 datos = {"valor":False,"mensaje": "Dando like a este comentario de trabajo" , "data" : {}}
-        except:
-            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 #Funciona
@@ -1161,6 +1179,7 @@ class getLikeComentsWorks(View):
         coment = ComentsWorks.objects.get(idcoment=request.POST.get('coment'))
         userLikes = coment.likes.all()
         values = userLikes.values()
+        
         try:      
             for value in values:
                 del value['iduser']

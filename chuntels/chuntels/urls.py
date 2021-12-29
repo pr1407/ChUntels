@@ -27,7 +27,6 @@ urlpatterns = [
     path('register/', register),
     path('home/', home),
     path('feed/', feed),
-    path('chat/', chat),
     path('publication/<int:id>/', publication),
     path('api/saludo/', service),
     path('editdata/',changeData),
