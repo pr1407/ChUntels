@@ -1,7 +1,9 @@
 import django
 from django import forms
 from django.contrib.auth import hashers
-from django.http import HttpResponse
+from django.conf import settings
+from django.http import HttpResponse, Http404
+import os
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.template import Template, Context
@@ -104,12 +106,16 @@ def home(request):
     if 'user' in request.session:
 
         user = User.objects.get(iduser = request.session['user'])
+        posts = Post.objects.filter(user = user)
+        friends = Friend.objects.filter(user = user) | Friend.objects.filter(friend = user)
         resta = today.year - user.age.year
         return render(
             request,
             'Home/home.html',
             {
                 "user" : user,  
+                "posts" : posts,  
+                "friends" : friends,  
                 "resta" : resta,
                 "tittle": "Pagina Principal",
             }
@@ -331,8 +337,6 @@ class UserViewName(View):
             datos = {"valor":True,"mensaje": "Lista de personas" , "data" : json.loads(jsonUser)}
         except Exception as e:
             datos = {"valor":False,"mensaje": "No se encontró resultados" , "data" : str(e)}
-        #print(datos)
-        ###datos = {"valor":True,"mensaje": "envio" , "datos" : request.POST.get('nombre')}
         return JsonResponse(datos, safe=False)
 
 class UserViewNickName(View):
@@ -389,7 +393,7 @@ class beFriends(View):
                 else:
                     chat = chat = Chat.objects.create(user=User.objects.get(iduser = user) , receiver=User.objects.get(iduser = friend))
                     chat.save()
-                    datos = {"valor":False,"mensaje": "Creando Chat" , "data" : {}}
+                    datos = {"valor":True,"mensaje": "Creando Chat" , "data" : {}}
             if relacionInversa.state == '3':
                 datos = {"valor":True,"mensaje": "Negaste la solicitud" , "data" : {}}
             relacionInversa.save()
@@ -443,6 +447,22 @@ class beFriends(View):
             
             relacion.save()
 
+        return JsonResponse(datos, safe=False)
+
+class deletePublication(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)   
+
+    def post(self, request):
+        user =request.session['user']
+        idPublication = request.POST.get('idPublication')
+        try:
+            publication = Post.objects.get(idpost = idPublication)
+            publication.delete()
+            datos = {"valor":True,"mensaje": "Se ha eliminado la publicacion" , "data" : {}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo eliminar la publicacion" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
 
 class sendPublication(View):
@@ -641,6 +661,8 @@ class getPublication(View):
             
             user = User.objects.get(nickname=nickname)
             post = Post.objects.filter(user=user)
+
+
             jsonPost = json.dumps(list(post.values()), sort_keys=True , default= str)
 
             datos = {"valor":True,"mensaje": "Lista de publicaciones" , "data" : json.loads(jsonPost)}
@@ -810,6 +832,7 @@ class getFriendPublications(View):
         try:
             user = User.objects.get(iduser=request.session['user'])
             friends = Friend.objects.filter(user = user , state='2') | Friend.objects.filter(friend = user , state='2')
+            listPublicFriends = []
             for friend in friends:
                 if friend.friend.iduser == user.iduser:
                     PostFriends = Post.objects.filter(user = friend.user)
@@ -823,7 +846,8 @@ class getFriendPublications(View):
                     del publiuser['iduser']
                     value['user'] = publiuser
                     del value['user_id']
-            jsonFriendPublications = json.dumps(list(values), sort_keys=True , default= str)
+                listPublicFriends += list(values)
+            jsonFriendPublications = json.dumps(listPublicFriends, sort_keys=True , default= str)
             datos = {"valor":True,"mensaje": "Lista de publicaciones de amigos" , "data" : json.loads(jsonFriendPublications)}
         except:
             datos = {"valor":False,"mensaje": "No se encontraron publicaciones de amigos" , "data" : {}}
@@ -851,13 +875,13 @@ class comentPublication(View):
     def post(self, request):
         user = User.objects.get(iduser=request.session['user'])
         post = request.POST.get('idpublication')
-        coment = request.POST.get('coment')
+        comentcontent = request.POST.get('coment')
         photo = request.POST.get('photo')
         files = request.POST.get('files')
         try:
             post = Post.objects.get(idpost=post)
             coment = Coments(
-                content = publication,
+                content = comentcontent,
                 created_at = today,
                 user = user,
                 post = post
@@ -939,11 +963,11 @@ class doLikePost(View):
             if listavacia:                
                 post.likes.remove(user)
                 post.save()
-                datos = {"valor":False,"mensaje": "Quitando like a esta publicacion" , "data" : {}}
+                datos = {"valor":True,"mensaje": "Quitando like a esta publicacion" , "data" : {}}
             else:
                 post.likes.add(user)
                 post.save()
-                datos = {"valor":False,"mensaje": "Dando like a esta publicacion" , "data" : {}}
+                datos = {"valor":True,"mensaje": "Dando like a esta publicacion" , "data" : {}}
         except Exception as e:
             datos = {"valor":False,"mensaje": "No se pudo realizar el like" , "data" : str(e)}
         return JsonResponse(datos, safe=False)
@@ -1246,3 +1270,45 @@ class getMessages(View):
             datos = {"valor":False,"mensaje": "No se encontraron mensajes" , "data" : {}}
             return HttpResponse(e)
         return JsonResponse(datos, safe=False)
+
+class uploadFiles(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    def post(self, request):
+        try:
+            user = User.objects.get(iduser=request.session['user'])
+            requestfile = request.FILES['file']
+            today = datetime.datetime.now()
+            file = Files(
+                name = requestfile.name,
+                created_at = today,
+                user = user
+            )
+            url = ""
+
+            if "PNG" in requestfile.name or "JPG" in requestfile.name or "JPEG" in requestfile.name or "GIF" in requestfile.name or "png" in requestfile.name or "jpg" in requestfile.name or "jpeg" in requestfile.name or "gif" in requestfile.name:
+                url = "/photos/" + requestfile.name
+                tipofile = "photo"
+                file.photo = requestfile
+            else:
+                url = "/files/" + requestfile.name
+                tipofile = "file"
+                file.files = requestfile
+
+            file.save()
+            #return HttpResponse(file.name)
+            datos = {"valor":True,"mensaje": "Archivo subido" , "data" : {"url":url,"type":tipofile}}
+        except Exception as e:
+            datos = {"valor":False,"mensaje": "No se pudo subir el archivo" , "data" : {}}
+            return HttpResponse(e)
+        return JsonResponse(datos, safe=False)
+
+def download(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT,'files/'+ path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-Excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404

@@ -43,15 +43,15 @@
                         <div class="col">
                             <div class="card-profile-stats d-flex justify-content-center">
                                 <div>
-                                    <span class="heading">22</span>
+                                    <span class="heading">{{ friends.count }}</span>
                                     <span class="description">Seguidores</span>
                                 </div>
                                 <div>
-                                    <span class="heading">5</span>
+                                    <span class="heading">0</span>
                                     <span class="description">Trabajos</span>
                                 </div>
                                 <div>
-                                    <span class="heading">5</span>
+                                    <span class="heading">{{ posts.count }}</span>
                                     <span class="description">Publicaciones</span>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
+                <!--<div class="card-footer">
                     <div class="nav-wrapper">
                         <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
                             <li class="nav-item">
@@ -87,10 +87,10 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
-        <div class="col-lg-4 col-md-5 col-12">
+        <!--<div class="col-lg-4 col-md-5 col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row justify-content-between align-items-center">
@@ -107,7 +107,7 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-auto">
-                            <!-- Avatar -->
+                            
                             <a href="/home/" class="">
                                 {% if user.photo %}
                                 <img alt="Image placeholder" class="avatar rounded-circle" src="{{user.photo.url}}">
@@ -128,36 +128,53 @@
                 </div>
                 <div class="card-footer"></div>
             </div>
-        </div>
+        </div>-->
+    </div>
+    <div class="row justify-content-center">
         <div class="col-lg-8 col-md-7 col-12">
             <div v-if="publicationlist.length > 0">
                 <div class="card" v-for="(item,index) in publicationlist">
                     <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <a href="#">
-                                {% if user.photo %}
-                                <img src={{user.photo.url}} class="avatar">
-                                {% else %}
-                                <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                                    class="avatar">
-                                {% endif %}
-                            </a>
-                            <div class="mx-3">
-                                <a href="#" class="text-dark font-weight-600 text-sm">{{user.name}}</a>
-                                <small class="d-block text-muted">[[item.created_at]]</small>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <a href="#">
+                                    {% if user.photo %}
+                                    <img src={{user.photo.url}} class="avatar">
+                                    {% else %}
+                                    <img src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
+                                        class="avatar">
+                                    {% endif %}
+                                </a>
+                                <div class="mx-3">
+                                    <a href="#" class="text-dark font-weight-600 text-sm">{{user.name}}</a>
+                                    <small class="d-block text-muted">[[item.created_at]]</small>
+                                </div>
+                            </div>
+                            <div>
+                                <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false" class="btn btn-secondary btn-icon-only"><i class="fas fa-bars"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-left ">
+                                    <li><a class="dropdown-item" @click.prevent="deletePublish(item)" href="#">Eliminar</a></li>
+                                </ul>
                             </div>
                         </div>
                         <div class="pt-3">
                             <p class="text-sm lh-160 mb-0">[[item.content]]</p>
+                            <div v-if="item.photo">
+                                <img :src="'/media'+item.photo" class="img-fluid">
+                            </div>
+                            <div v-if="item.files">
+                                <a :href="'/download-file/files/'+item.files.split('/')[2]" target="_blank" class="btn btn-success"><i class="fas fa-file-alt"></i> [[ item.files.split('/')[2] ]]</a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-footer">
                         <div class="icon-actions">
-                            <a href="#" class="like " @click="sendLike(index)" id="btn-like">
+                            <a href="#" class="like " @click.prevent="sendLike(item)" :id="'btn-like-'+item.idpost">
                                 <i class="ni ni-like-2"></i>
                                 <span class="text-muted">[[item.likes]] me gusta</span>
                             </a>
-                            <a href="#" class="like ">
+                            <a :href="'/publication/'+item.idpost" class="like ">
                                 <i class="fas fa-comment-alt"></i>
                                 <span class="text-muted">[[item.comments]] comentario</span>
                             </a>

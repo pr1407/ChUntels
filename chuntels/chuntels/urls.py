@@ -27,6 +27,7 @@ urlpatterns = [
     path('register/', register),
     path('home/', home),
     path('feed/', feed),
+    path('chat/', chat),
     path('publication/<int:id>/', publication),
     path('api/saludo/', service),
     path('editdata/',changeData),
@@ -37,6 +38,7 @@ urlpatterns = [
     #API REST PHAT'S
     path('api/search-person/', UserViewName.as_view() , name= 'userDetail'),
     path('api/send-friend-request/', beFriends.as_view()),
+    path('api/delete-publication/', deletePublication.as_view()),
     path('api/send-publication/', sendPublication.as_view()),
     path('api/get-publication/<str:nickname>/', getPublication.as_view()),
     path('api/get-publication/', getPublication.as_view()),
@@ -62,5 +64,9 @@ urlpatterns = [
     path('api/get-likes-comentsworks/', getLikeComentsWorks.as_view()),
     path('api/send-message/', sendMessages.as_view()),
     path('api/get-messages/', getMessages.as_view()),
+
+
+    path('api/file-upload/', uploadFiles.as_view()),
+    path('download-file/files/<str:path>/', download),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

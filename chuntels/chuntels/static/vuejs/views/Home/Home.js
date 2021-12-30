@@ -1,3 +1,33 @@
+/*Dropzone.options.myDropzone = {
+    addRemoveLinks: true,
+    // Configuration options go here
+};*/
+Dropzone.autoDiscover = false;
+$(document).ready(function(e) {
+    const filesdropzone = $("#publish-dropzone").dropzone( {
+        url: "/api/file-upload/",
+        addRemoveLinks: true,
+        success: function (file, response) {
+            var imgName = response.data;
+            file.previewElement.classList.add("dz-success");
+            console.log(imgName);
+            if(imgName.type == "file") {
+                $('#file-name').val(imgName.url);
+            }else{
+                $('#photo-name').val(imgName.url);
+            }
+        },
+        error: function (file, response) {
+            file.previewElement.classList.add("dz-error");
+        }
+    });
+
+    $("#publicarmodal").on('hidden.bs.modal', function (e) {
+        console.log("removed all files");
+        filesdropzone[0].dropzone.removeAllFiles( true );
+    });
+})
+
 const home = new Vue({
     el: '#home',
     delimiters: ['[[', ']]'],
@@ -9,14 +39,43 @@ const home = new Vue({
         file: ''
     },
     methods: {
+        async deletePublish(publication) {
+            console.log(publication)
+            try {
+                let formData = new FormData();
+                
+                formData.append('idPublication', publication.idpost);
+
+                const response = await axios.post(`/api/delete-publication/`,formData);
+                if (response.status === 200) {
+                    let responseData = response.data
+                    if (responseData.valor) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Publicación enviada',
+                            text: responseData.mensaje
+                        })
+                        await this.getPublications()
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ocurrio un error',
+                            text: responseData.mensaje
+                        })
+                    }
+                }
+            }catch(e){
+                console.log(e)
+            }
+        },
         async sendPublish(iduser) {
             try {
                 let formData = new FormData();
 
                 formData.append('publication', this.publish);
                 formData.append('user', iduser);
-                formData.append('photo', this.photo);
-                formData.append('files', this.file);
+                formData.append('photo', $('#photo-name').val());
+                formData.append('files', $('#file-name').val());
                 formData.append('typePost', 1);
 
                 const result = await axios.post('/api/send-publication/', formData);
@@ -58,7 +117,7 @@ const home = new Vue({
                     let responseData = result.data
                     if (responseData.valor) {
                         this.publicationlist = responseData.data
-                        for(let key in this.publicationlist) {
+                        for (let key in this.publicationlist) {
                             moment.locale('es')
                             let fecha = moment(this.publicationlist[key].created_at)
                             moment.locale('es')
@@ -74,7 +133,7 @@ const home = new Vue({
                         })
                     }
                 }
-            }catch(err){
+            } catch (err) {
                 console.log(err)
                 Swal.fire({
                     icon: 'error',
@@ -83,10 +142,34 @@ const home = new Vue({
                 })
             }
         },
-        async sendLike(index) {
+        async sendLike(publication) {
             if (!$('#btn-like').hasClass('active')) {
-                this.publicationlist[index].likes = (parseInt(this.publicationlist[index].likes) + 1).toString()
-                $('#btn-like').addClass('active')
+                console.log(publication)
+                $('#btn-like-'+publication.idpost).addClass('active')
+                try {
+                    let formData = new FormData();
+                    formData.append('idpublication', publication.idpost);
+                    const result = await axios.post('/api/send-likes-post/', formData);
+                    if (result.status === 200) {
+                        let responseData = result.data
+                        if (responseData.valor) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Like enviado',
+                                text: responseData.mensaje
+                            })
+                            await this.getPublications()
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ocurrio un error',
+                                text: responseData.mensaje
+                            })
+                        }
+                    }
+                }catch(err) {
+                    console.log(err)
+                }
             }
         }
     },

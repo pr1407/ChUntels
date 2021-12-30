@@ -10,14 +10,14 @@
 {% include "../Components/navbar.html" %}
 
 <div class="container my-5" id="feed">
-    <div class="row">
-        <div class="col-lg-4 col-md-5 col-12 d-md-block d-none">
+    <div class="row d-flex justify-content-center">
+        <!--<div class="col-lg-4 col-md-5 col-12 d-md-block d-none">
             <div class="card">
                 <div class="card-body">
 
                 </div>
             </div>
-        </div>
+        </div>-->
         <div class="col-lg-8 col-md-7 col-12">
 
             <div class="card">
@@ -46,34 +46,49 @@
             </div>
             <div class="card" v-for="(item,index) in publicationlist">
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <a href="#">
-                            <img v-if="item.user.photo" :src="'/media/'+item.user.photo"
-                                class="avatar">
-                            <img v-else src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
-                                class="avatar">
-                        </a>
-                        <div class="mx-3">
-                            <a href="#" class="text-dark font-weight-600 text-sm">[[item.user.name]]</a>
-                            <small class="d-block text-muted">[[item.created_at]]</small>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <a href="#">
+                                <img v-if="item.user.photo" :src="'/media/'+item.user.photo"
+                                    class="avatar">
+                                <img v-else src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-1.jpg"
+                                    class="avatar">
+                            </a>
+                            <div class="mx-3">
+                                <a href="#" class="text-dark font-weight-600 text-sm">[[item.user.name]]</a>
+                                <small class="d-block text-muted">[[item.created_at]]</small>
+                            </div>
                         </div>
+                        <!--<div>
+                            <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false" class="btn btn-icon-only"><i class="fas fa-bars"></i></a>
+                            <ul class="dropdown-menu dropdown-menu-left ">
+                                <li><a class="dropdown-item" @click.prevent="deletePublish(item)" href="#">Eliminar</a></li>
+                            </ul>
+                        </div>-->
                     </div>
                     <div class="pt-3">
                         <p class="text-sm lh-160 mb-0">[[item.content]]</p>
+                        <div v-if="item.photo">
+                            <img :src="'/media'+item.photo" class="img-fluid">
+                        </div>
+                        <div v-if="item.file">
+                            <a :href="'/media'+item.file" class="btn btn-success"><i class="fas fa-file-alt"></i> [[item.file]]</a>
+                        </div>
                     </div>
                     <div class="pt-3">
-                        <div class="icon-actions">
+                        <div class="icon-actions d-flex justify-content-between">
                             <a href="#" class="like active">
                                 <i class="ni ni-like-2"></i>
-                                <span class="text-muted">50 me gusta</span>
+                                <span class="text-muted">[[item.likes]] me gusta</span>
                             </a>
                             <a href="/publication/1">
                                 <i class="fas fa-comment-alt"></i>
-                                <span class="text-muted">1 comentario</span>
+                                <span class="text-muted">[[item.comments]] comentario</span>
                             </a>
                             <a href="#">
                                 <i class="ni ni-curved-next"></i>
-                                <span class="text-muted">2 compartidos</span>
+                                <span class="text-muted">[[item.shareds]] compartidos</span>
                             </a>
                         </div>
                     </div>

@@ -25,12 +25,21 @@
                         placeholder="¿Qué quieres compartir?" id="exampleFormControlTextarea1" rows="3"
                         style="resize: none;"></textarea>
                 </div>
-                <button type="button" class="btn btn-slack btn-icon-only rounded-circle">
+                <form action="/api/file-upload/" role="form" method="post" class="dropzone" id="publish-dropzone"><!--action="/api/file-upload/"-->
+                    <div class="dz-message">
+                        <div class="col-xs-8">
+                            <div class="message">
+                                <p>Subir archivos</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--<button type="button" class="btn btn-slack btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fas fa-photo-video"></i></span>
                 </button>
                 <button type="button" class="btn btn-facebook btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fas fa-user-tag"></i></span>
-                </button>
+                </button>-->
             </div>
             <div class="modal-footer">
                 <button id="btn-publish" @click="sendPublish({{user.iduser}})" type="button"
@@ -39,3 +48,6 @@
         </div>
     </div>
 </div>
+
+<input type="hidden" name="photo-name" id="photo-name">
+<input type="hidden" name="file-name" id="file-name">

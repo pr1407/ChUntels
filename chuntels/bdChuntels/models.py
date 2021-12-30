@@ -114,6 +114,15 @@ class Message(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver', null=True)
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
     files = models.FileField(upload_to='files/', null=True, blank=True)
     state = models.CharField(max_length=1, default='1', null=True, blank=True)
+
+class Files(models.Model):
+    idfile = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    photo = models.ImageField(upload_to='photos/', null=True, blank=True)
+    files = models.FileField(upload_to='files/', null=True, blank=True)
